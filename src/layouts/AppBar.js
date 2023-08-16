@@ -13,6 +13,7 @@ import {
   styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+import EtheriumIcon from '@/components/EtheriumIcon'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral,
@@ -85,6 +86,7 @@ function ResponsiveAppBar() {
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}>
+            <EtheriumIcon />
             {pages.map(([page, location]) => (
               <Button
                 key={page}
