@@ -1,4 +1,5 @@
-import { InputBase, alpha, styled } from '@mui/material'
+import { useState } from 'react'
+import { InputBase, Popover, alpha, styled } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
 const Search = styled('div')(({ theme }) => ({
@@ -56,18 +57,47 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: '100%',
 }))
 
-export default function SearchBar({ value, handleChange }) {
+export default function SearchBar({ uniqueId, value, handleChange, searchResult }) {
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
   return (
-    <Search>
-      <SearchIconWrapper>
-        <SearchIcon />
-      </SearchIconWrapper>
-      <StyledInputBase
-        placeholder="Search…"
-        inputProps={{ 'aria-label': 'search' }}
-        value={value}
-        onChange={handleChange}
-      />
-    </Search>
+    <>
+      <Search {...(uniqueId && { id: uniqueId })}>
+        <SearchIconWrapper>
+          <SearchIcon />
+        </SearchIconWrapper>
+        <StyledInputBase
+          autoFocus
+          placeholder="Search…"
+          inputProps={{ 'aria-label': 'search' }}
+          value={value}
+          onChange={handleChange}
+          onKeyUp={(e) => setAnchorEl(e.currentTarget)}
+        />
+      </Search>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        onClick={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        disableAutoFocus
+        disableEnforceFocus
+        container={() => (uniqueId ? document.getElementById(uniqueId) : document.body)}
+      >
+        {searchResult}
+      </Popover>
+    </>
   )
 }

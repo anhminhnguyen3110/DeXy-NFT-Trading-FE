@@ -12,8 +12,10 @@ import {
   Typography,
   Menu,
   MenuItem,
-  styled,
   Stack,
+  Paper,
+  Avatar,
+  styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
@@ -84,6 +86,13 @@ const NavButton = styled(Button)(({ theme }) => ({
   },
 }))
 
+const SearchResultContainer = styled(Paper)(({ theme }) => ({
+  width: '90vw',
+  [theme.breakpoints.up('sm')]: {
+    width: 'clamp(14rem, 20vw, 18rem)',
+  },
+}))
+
 const pages = [
   ['Marketplace', '/'],
   ['Create', '/create'],
@@ -116,6 +125,29 @@ function ResponsiveAppBar() {
     setSearchValue(event.target.value)
   }
 
+  const renderSearchResult = () => {
+    const searchResult = [
+      ['Space doge 1', 'abcxyz', '/space-doge'],
+      ['Space doge 2', 'abcxyz', '/space-doge'],
+      ['Space doge 3', 'abcxyz', '/space-doge'],
+    ]
+    return (
+      <SearchResultContainer>
+        {searchResult.map(([name, owner, location]) => (
+          <MenuItem key={`${name}-${owner}`} onClick={() => handleClickMenu(location)}>
+            <Avatar src="/space-doge-sm.jpeg" variant="rounded" />
+            <Stack gap={0.2} marginLeft={1}>
+              <Typography variant="h4" style={{ fontSize: '1rem' }}>
+                {name}
+              </Typography>
+              <Typography variant="subtitle2">{owner}</Typography>
+            </Stack>
+          </MenuItem>
+        ))}
+      </SearchResultContainer>
+    )
+  }
+
   return (
     <AppBarStyled position="static">
       <Container maxWidth="xl">
@@ -130,7 +162,12 @@ function ResponsiveAppBar() {
             </Stack>
           )}
           <NavMenuContainer sx={{ display: { xs: 'flex', sm: 'none' } }}>
-            <SearchBar value={searchValue} handleChange={handleChangeSearch} />
+            <SearchBar
+              uniqueId="app-search-bar-sm"
+              value={searchValue}
+              handleChange={handleChangeSearch}
+              searchResult={renderSearchResult()}
+            />
             <IconButton
               id="nav-menu-button"
               size="large"
@@ -175,7 +212,12 @@ function ResponsiveAppBar() {
                 flexShrink: 8,
               }}
             >
-              <SearchBar value={searchValue} handleChange={handleChangeSearch} />
+              <SearchBar
+                uniqueId="app-search-bar"
+                value={searchValue}
+                handleChange={handleChangeSearch}
+                searchResult={renderSearchResult()}
+              />
             </div>
             {pages.map(([page, location]) => (
               <NavButton
