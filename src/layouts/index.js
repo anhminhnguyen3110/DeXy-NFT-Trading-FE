@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles'
 import { Box } from '@mui/material'
 // component
 import ResponsiveAppBar from './AppBar'
-
+import Footer from './Footer'
 const RootStyle = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
@@ -26,6 +26,7 @@ export default function Layout({ children }) {
     <RootStyle>
       <ResponsiveAppBar />
       <MainStyle>{children}</MainStyle>
+      <Footer />
     </RootStyle>
   )
 }
