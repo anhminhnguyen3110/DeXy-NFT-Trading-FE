@@ -1,4 +1,4 @@
-export default function EtheriumIcon({ size = 13 }) {
+export default function EthereumIcon({ size = 13 }) {
   return (
     <div style={{ width: size, height: (20 * size) / 11 }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11 20" fill="none">
