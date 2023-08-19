@@ -40,6 +40,18 @@ export default function ThemeProvider({ children }) {
                 opacity: 0.8,
               },
             },
+            outlined: {
+              color: palette.dark.text.primary,
+              borderColor: palette.dark.grey[200],
+              borderWidth: 2,
+              '&:hover': {
+                backgroundColor: 'transparent',
+                color: palette.dark.text.primary,
+                borderColor: palette.dark.grey[200],
+                borderWidth: 2,
+                opacity: 0.7,
+              },
+            },
           },
         },
       },
