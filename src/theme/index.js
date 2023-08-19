@@ -30,6 +30,18 @@ export default function ThemeProvider({ children }) {
             },
           },
         },
+        MuiButton: {
+          styleOverrides: {
+            contained: {
+              backgroundColor: palette.dark.grey[100],
+              color: palette.dark.grey[800],
+              '&:hover': {
+                backgroundColor: palette.dark.grey[100],
+                opacity: 0.8,
+              },
+            },
+          },
+        },
       },
     }),
     []
