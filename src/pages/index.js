@@ -21,11 +21,11 @@ export default function Home() {
       <Head>
         <title>DeXy | Homepage</title>
       </Head>
-      <main>
+      <div>
         <textarea type="text" value={query} onChange={(e) => setQuery(e.target.value)} />
         <button onClick={() => executeQuery(query)}>Execute</button>
         <div>{data}</div>
-      </main>
+      </div>
     </>
   )
 }
