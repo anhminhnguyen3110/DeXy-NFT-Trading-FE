@@ -1,8 +1,9 @@
 // @mui
 import { styled } from '@mui/material/styles'
-import { Box } from '@mui/material'
+import { Box, Container } from '@mui/material'
 // component
 import ResponsiveAppBar from './AppBar'
+import Footer from './Footer'
 
 const RootStyle = styled(Box)(() => ({
   display: 'flex',
@@ -10,8 +11,8 @@ const RootStyle = styled(Box)(() => ({
   minHeight: '100vh',
 }))
 
-const MainStyle = styled('main')(({ theme }) => ({
-  //   backgroundColor: homepage ? theme.palette.primary.main : theme.palette.grey[400],
+const MainStyle = styled(Container)(({ theme }) => ({
+  minHeight: '100vh',
   flexGrow: 1,
   marginBottom: 'auto',
   [theme.breakpoints.up('lg')]: {
@@ -25,7 +26,10 @@ export default function Layout({ children }) {
   return (
     <RootStyle>
       <ResponsiveAppBar />
-      <MainStyle>{children}</MainStyle>
+      <MainStyle component="main" maxWidth="xl">
+        {children}
+      </MainStyle>
+      <Footer />
     </RootStyle>
   )
 }
