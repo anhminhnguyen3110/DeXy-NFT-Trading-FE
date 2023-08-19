@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import DynamicTable from '@/components/DynamicTable'
 import PaginationButtons from '@/components/Pagination'
+import ActionAreaCard from '@/components/Card'
 
 const columns = [
   { id: 'name', label: 'Dessert (100g serving)', align: 'left' },
@@ -14,7 +15,7 @@ const rows = [
   { name: 'Ice cream sandwich', calories: 237, fat: 9.0, carbs: 37, protein: 4.3 },
 ]
 
-export default function Home() {
+export default function Test() {
   return (
     <>
       <Head>
@@ -24,6 +25,11 @@ export default function Home() {
         <div style={{ marginTop: '10px' }}>
           <DynamicTable data={rows} columns={columns} />
           <PaginationButtons />
+          <ActionAreaCard
+            image="/static/images/cards/contemplative-reptile.jpg"
+            title="Lizard"
+            price="0.009"
+          />
         </div>
       </main>
     </>
