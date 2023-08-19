@@ -76,13 +76,10 @@ const COMMON = {
   grey: GREY,
   divider: GREY[500],
   action: {
-    active: PRIMARY.main,
-    hover: PRIMARY.main,
     selected: PRIMARY.main,
     disabled: GREY[500_80],
     disabledBackground: GREY[500_24],
     focus: PRIMARY.main,
-    hoverOpacity: 0.8,
     disabledOpacity: 0.5,
   },
 }

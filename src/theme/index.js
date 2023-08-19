@@ -15,6 +15,22 @@ export default function ThemeProvider({ children }) {
       breakpoints,
       shape: { borderRadius: 10 },
       direction: 'ltr',
+      components: {
+        MuiPaper: {
+          styleOverrides: {
+            root: {
+              backgroundImage: 'unset',
+            },
+          },
+        },
+        MuiAppBar: {
+          styleOverrides: {
+            root: {
+              backgroundImage: 'unset',
+            },
+          },
+        },
+      },
     }),
     []
   )
