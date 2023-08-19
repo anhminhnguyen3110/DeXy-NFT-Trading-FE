@@ -19,7 +19,7 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
-import EtheriumIcon from '@/components/EtheriumIcon'
+import EthereumIcon from '@/components/EthereumIcon'
 import SearchBar from '@/components/SearchBar'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -157,7 +157,7 @@ function ResponsiveAppBar() {
           </Link>
           {isDesktop && (
             <Stack direction="row" gap={1} alignItems="center">
-              <EtheriumIcon />
+              <EthereumIcon />
               <Typography fontSize="1.25rem">Etherium</Typography>
             </Stack>
           )}
