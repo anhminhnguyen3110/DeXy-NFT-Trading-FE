@@ -11,6 +11,10 @@ export default function PaginationButtons({ spacing = 10, pageCount = 4 }) {
       '&.Mui-selected': {
         backgroundColor: theme.palette.primary.dark,
       },
+      '&:hover': {
+        // Add this block for hover styles
+        backgroundColor: theme.palette.primary.main, // Change this to the desired hover color
+      },
     },
     [theme.breakpoints.down('sm')]: {
       '& .MuiPaginationItem-root': {
@@ -19,9 +23,6 @@ export default function PaginationButtons({ spacing = 10, pageCount = 4 }) {
         height: '20px',
         lineHeight: '20px',
         margin: '0 2px',
-        '&.Mui-selected': {
-          backgroundColor: theme.palette.primary.light,
-        },
       },
     },
   }))
