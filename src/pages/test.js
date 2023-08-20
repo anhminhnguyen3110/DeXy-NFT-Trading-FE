@@ -2,6 +2,7 @@ import Head from 'next/head'
 import DynamicTable from '@/components/DynamicTable'
 import PaginationButtons from '@/components/Pagination'
 import ActionAreaCard from '@/components/Card'
+import CheckboxeComponent from '@/components/CheckBox'
 
 const columns = [
   { id: 'name', label: 'Dessert (100g serving)', align: 'left' },
@@ -30,6 +31,7 @@ export default function Test() {
             title="Lizard"
             price="0.009"
           />
+          <CheckboxeComponent />
         </div>
       </main>
     </>
