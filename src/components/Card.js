@@ -24,9 +24,9 @@ const TypographyStyledPrice = styled(Typography)(({ theme }) => ({
   flexShrink: 0,
 }))
 
-export default function ActionAreaCard({ image, title, price }) {
+export default function ActionAreaCard({ image, title, price, props }) {
   return (
-    <Card sx={{ maxWidth: 180, height: 280 }}>
+    <Card {...props}>
       <CardActionArea>
         <CardMedia component="img" height="180" image={image} alt={title} />
         <CardContent>

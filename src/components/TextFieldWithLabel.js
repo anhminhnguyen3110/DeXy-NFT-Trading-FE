@@ -38,3 +38,11 @@ export default function TextFieldWithLabel({ label, value, onChange, ...props })
     </FormControl>
   )
 }
+
+export const InputBaseStyledMarketplace = styled(InputBaseStyled)(({ theme }) => ({
+  width: '30%',
+  paddingLeft: theme.spacing(1.5),
+  [theme.breakpoints.down('lg')]: {
+    maxWidth: '3.5625rem',
+  },
+}))

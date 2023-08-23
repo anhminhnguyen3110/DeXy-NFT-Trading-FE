@@ -4,12 +4,11 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-
 import Paper from '@mui/material/Paper'
 import { styled } from '@mui/material/styles'
-import { Box, Stack } from '@mui/material'
-
+import { Box, Stack, Typography } from '@mui/material'
 import dynamic from 'next/dynamic'
+
 const Table = dynamic(() => import('@mui/material/Table'), {
   ssr: false,
 })
@@ -34,7 +33,9 @@ const TableHeadColumnStyled = styled(TableHead)(({ theme }) => ({
   borderBottom: `2px solid ${theme.palette.primary.main}`,
 }))
 
-const DynamicTableDesktop = ({ data, columns }) => {
+const DynamicTableDesktop = ({ data }) => {
+  const columns = Object.keys(data[0])
+
   return (
     <Box sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}>
       <TableContainerStyled component={Paper}>
@@ -42,18 +43,18 @@ const DynamicTableDesktop = ({ data, columns }) => {
           <TableHeadColumnStyled>
             <TableRowStyle>
               {columns.map((column) => (
-                <TableCell key={column.id} align={'left'}>
-                  {column.label}
+                <TableCell key={column} align={'left'}>
+                  {column}
                 </TableCell>
               ))}
             </TableRowStyle>
           </TableHeadColumnStyled>
           <TableBody>
-            {data.map((row) => (
-              <TableRowStyle key={row.name}>
+            {data.map((row, rowIndex) => (
+              <TableRowStyle key={rowIndex}>
                 {columns.map((column) => (
-                  <TableCell key={column.id} align={'left'}>
-                    {row[column.id]}
+                  <TableCell key={column} align={'left'}>
+                    {row[column]}
                   </TableCell>
                 ))}
               </TableRowStyle>
@@ -65,25 +66,35 @@ const DynamicTableDesktop = ({ data, columns }) => {
   )
 }
 
-const DynamicTableMobile = ({ data, columns }) => {
+const DynamicTableMobile = ({ data }) => {
+  const columns = Object.keys(data[0])
+
   return (
     <Box sx={{ display: { xs: 'flex', sm: 'flex', md: 'none' } }}>
       <TableContainerStyled component={Paper}>
         <TableStyled>
           <TableBody>
-            {data.map((row, id) => (
-              <TableRowStyle key={id}>
+            {data.map((row, rowIndex) => (
+              <TableRowStyle key={rowIndex}>
                 <Stack spacing={2}>
-                  {columns.map((column, id) => (
-                    <Stack key={id} direction="row" spacing={2} sx={{ flexGrow: 1 }}>
-                      <TableCell align={'left'} sx={{ width: '50%' }}>
-                        {column.label}
-                      </TableCell>
-                      <TableCell align={'left'} sx={{ width: '50%' }}>
-                        {data[id][column.id]}
-                      </TableCell>
-                    </Stack>
-                  ))}
+                  <TableCell align={'left'} sx={{ width: '50%' }}>
+                    {columns.map((column) => (
+                      <Stack
+                        key={column}
+                        direction="row"
+                        rowGap={2}
+                        spacing={2}
+                        sx={{ flexGrow: 1 }}
+                      >
+                        <Typography width={'50%'} variant="body1" sx={{ flexGrow: 1 }}>
+                          {column}
+                        </Typography>
+                        <Typography width={'50%'} variant="body1" sx={{ flexGrow: 1 }}>
+                          {row[column]}
+                        </Typography>
+                      </Stack>
+                    ))}
+                  </TableCell>
                 </Stack>
               </TableRowStyle>
             ))}
@@ -94,11 +105,11 @@ const DynamicTableMobile = ({ data, columns }) => {
   )
 }
 
-function DynamicTable({ data, columns }) {
+function DynamicTable({ data }) {
   return (
     <>
-      <DynamicTableDesktop data={data} columns={columns} />
-      <DynamicTableMobile data={data} columns={columns} />
+      <DynamicTableDesktop data={data} />
+      <DynamicTableMobile data={data} />
     </>
   )
 }

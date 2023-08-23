@@ -13,7 +13,7 @@ export default function PaginationButtons({ spacing = 10, pageCount = 4 }) {
       },
       '&:hover': {
         // Add this block for hover styles
-        backgroundColor: theme.palette.primary.main, // Change this to the desired hover color
+        backgroundColor: theme.palette.primary.dark, // Change this to the desired hover color
       },
     },
     [theme.breakpoints.down('sm')]: {
