@@ -1,34 +1,38 @@
-import { useState } from 'react'
-import { Pagination, Stack, styled } from '@mui/material'
+import * as React from 'react'
+import Pagination from '@mui/material/Pagination'
+import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
 
-const StyledPagination = styled(Pagination)(({ theme }) => ({
-  '& .MuiPaginationItem-root': {
-    '&.Mui-selected': {
-      backgroundColor: theme.palette.primary.light,
-    },
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-    },
-  },
-  [theme.breakpoints.down('sm')]: {
+export default function PaginationButtons({ spacing = 10, pageCount = 4 }) {
+  const [page, setPage] = React.useState(1)
+
+  const StyledPagination = styled(Pagination)(({ theme }) => ({
     '& .MuiPaginationItem-root': {
-      minWidth: '20px',
-      height: '20px',
-      lineHeight: '20px',
-      margin: '0 2px',
+      '&.Mui-selected': {
+        backgroundColor: theme.palette.primary.dark,
+      },
+      '&:hover': {
+        // Add this block for hover styles
+        backgroundColor: theme.palette.primary.main, // Change this to the desired hover color
+      },
     },
-  },
-}))
+    [theme.breakpoints.down('sm')]: {
+      '& .MuiPaginationItem-root': {
+        fontSize: '0.7rem',
+        minWidth: '20px',
+        height: '20px',
+        lineHeight: '20px',
+        margin: '0 2px',
+      },
+    },
+  }))
 
-export default function PaginationButtons({ spacing = 10, pageCount = 4, ...props }) {
-  const [page, setPage] = useState(1)
-
-  const handlePageChange = (_event, newPage) => {
+  const handlePageChange = (event, newPage) => {
     setPage(newPage)
   }
 
   return (
-    <Stack spacing={spacing} {...props}>
+    <Stack spacing={spacing}>
       <StyledPagination
         page={page}
         count={pageCount}

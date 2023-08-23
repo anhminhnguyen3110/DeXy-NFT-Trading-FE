@@ -255,7 +255,7 @@ function ResponsiveAppBar() {
             >
               <MenuItem onClick={() => {}}>Connect wallet</MenuItem>
               {accountMenu.map(([page, location]) => (
-                <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
+                <MenuItem key={`account-menu-page`} onClick={() => handleClickMenu(location)}>
                   {page}
                 </MenuItem>
               ))}

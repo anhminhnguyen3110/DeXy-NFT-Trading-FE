@@ -1,80 +1,65 @@
-import {
-  Box,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  styled,
-} from '@mui/material'
+import React from 'react'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 
-const TableContainerStyled = styled(TableContainer)(() => ({
+import Paper from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
+import { Box, Stack } from '@mui/material'
+
+import dynamic from 'next/dynamic'
+const Table = dynamic(() => import('@mui/material/Table'), {
+  ssr: false,
+})
+
+const TableStyled = styled(Table)(({ theme }) => ({
+  backgroundColor: '#1D222A',
+}))
+
+const TableContainerStyled = styled(TableContainer)(({ theme }) => ({
   borderRadius: '0px',
-  backgroundColor: 'transparent',
-  boxShadow: 'none',
-  '& .MuiTableCell-root': {
-    borderBottom: 'none',
-  },
 }))
 
 const TableRowStyle = styled(TableRow)(({ theme }) => ({
-  '&:not(:first-of-type)': {
-    borderTop: `1px solid ${theme.palette.grey[500]}`,
+  [theme.breakpoints.down('md')]: {
+    borderTop: `1px solid ${theme.palette.main}`,
+    borderBottom: `1px solid ${theme.palette.main}`,
   },
-  [theme.breakpoints.down('sm')]: {
-    '&:first-of-type': {
-      borderTop: `1px solid ${theme.palette.primary.main}`,
-    },
-  },
-}))
-
-const TableCellHeader = styled(TableCell)(({ theme }) => ({
-  fontSize: '1rem',
-  fontWeight: 'lighter',
-  color: theme.palette.text.secondary,
-}))
-
-const TableCellStyle = styled(TableCell)(() => ({
-  fontSize: '1rem',
 }))
 
 const TableHeadColumnStyled = styled(TableHead)(({ theme }) => ({
   borderTop: `1px solid ${theme.palette.primary.main}`,
-  borderBottom: `1px solid ${theme.palette.primary.main}`,
+  borderBottom: `2px solid ${theme.palette.primary.main}`,
 }))
 
 const DynamicTableDesktop = ({ data, columns }) => {
   return (
-    <Box sx={{ display: { xs: 'none', sm: columns.length <= 3 ? 'flex' : 'none', md: 'flex' } }}>
+    <Box sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}>
       <TableContainerStyled component={Paper}>
-        <Table>
+        <TableStyled>
           <TableHeadColumnStyled>
             <TableRowStyle>
               {columns.map((column) => (
-                <TableCellHeader key={`head-${column.id}`} align={column.align || 'left'}>
+                <TableCell key={column.id} align={'left'}>
                   {column.label}
-                </TableCellHeader>
+                </TableCell>
               ))}
             </TableRowStyle>
           </TableHeadColumnStyled>
           <TableBody>
-            {data.map((row, id) => (
-              <TableRowStyle key={`table-row-${id}`}>
+            {data.map((row) => (
+              <TableRowStyle key={row.name}>
                 {columns.map((column) => (
-                  <TableCellStyle
-                    key={`table-row-${id}-${column.id}`}
-                    align={column.align || 'left'}
-                  >
+                  <TableCell key={column.id} align={'left'}>
                     {row[column.id]}
-                  </TableCellStyle>
+                  </TableCell>
                 ))}
               </TableRowStyle>
             ))}
           </TableBody>
-        </Table>
+        </TableStyled>
       </TableContainerStyled>
     </Box>
   )
@@ -82,37 +67,28 @@ const DynamicTableDesktop = ({ data, columns }) => {
 
 const DynamicTableMobile = ({ data, columns }) => {
   return (
-    <Box sx={{ display: { xs: 'flex', sm: columns.length > 3 ? 'flex' : 'none', md: 'none' } }}>
+    <Box sx={{ display: { xs: 'flex', sm: 'flex', md: 'none' } }}>
       <TableContainerStyled component={Paper}>
-        <Table>
+        <TableStyled>
           <TableBody>
             {data.map((row, id) => (
-              <TableRowStyle key={`sm-table-row-${id}`}>
-                <Stack spacing={2} component="td">
-                  {columns.map((column) => (
-                    <Stack
-                      key={`sm-table-row-${id}-${column.id}`}
-                      direction="row"
-                      spacing={2}
-                      sx={{ flexGrow: 1 }}
-                    >
-                      <TableCellHeader align={'left'} sx={{ flexBasis: '30%' }} component="div">
+              <TableRowStyle key={id}>
+                <Stack spacing={2}>
+                  {columns.map((column, id) => (
+                    <Stack key={id} direction="row" spacing={2} sx={{ flexGrow: 1 }}>
+                      <TableCell align={'left'} sx={{ width: '50%' }}>
                         {column.label}
-                      </TableCellHeader>
-                      <TableCellStyle
-                        align={column.align || 'left'}
-                        sx={{ flexBasis: '70%' }}
-                        component="div"
-                      >
-                        {row[column.id]}
-                      </TableCellStyle>
+                      </TableCell>
+                      <TableCell align={'left'} sx={{ width: '50%' }}>
+                        {data[id][column.id]}
+                      </TableCell>
                     </Stack>
                   ))}
                 </Stack>
               </TableRowStyle>
             ))}
           </TableBody>
-        </Table>
+        </TableStyled>
       </TableContainerStyled>
     </Box>
   )
