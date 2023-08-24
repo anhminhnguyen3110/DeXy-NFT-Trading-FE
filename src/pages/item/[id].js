@@ -37,14 +37,15 @@ const ImageContainer = styled('div')(({ theme }) => ({
   maxHeight: '32rem',
   display: 'flex',
   justifyContent: 'center',
+  backgroundColor: 'black',
+  borderRadius: theme.shape.borderRadius,
+  overflow: 'hidden',
   [theme.breakpoints.down('md')]: {
     maxWidth: 'min(24rem, 100%)',
     marginInline: 'auto',
   },
   '& img': {
-    maxWidth: '100%',
-    marginInline: 'auto',
-    borderRadius: theme.shape.borderRadius,
+    objectFit: 'contain',
   },
 }))
 
@@ -87,7 +88,7 @@ export default function ItemDetail() {
         </Grid>
         <Grid xs={12} md={5}>
           <ImageContainer>
-            <Image src="/bean.jpeg" alt={`image-${id}`} fill priority />
+            <Image src="/bean.png" alt={`image-${id}`} fill priority />
           </ImageContainer>
         </Grid>
       </Grid>
