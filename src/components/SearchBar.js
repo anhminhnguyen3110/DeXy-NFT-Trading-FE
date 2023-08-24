@@ -93,7 +93,6 @@ export default function SearchBar({ uniqueId, value, handleChange, searchResult 
         }}
         disableAutoFocus
         disableEnforceFocus
-        container={() => (uniqueId ? document.getElementById(uniqueId) : document.body)}
       >
         {searchResult}
       </Popover>

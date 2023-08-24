@@ -172,7 +172,7 @@ function ResponsiveAppBar() {
               id="nav-menu-button"
               size="large"
               aria-label="menu"
-              aria-controls="menu-appbar"
+              aria-controls="menu-appbar-sm"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
@@ -180,7 +180,7 @@ function ResponsiveAppBar() {
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
+              id="menu-appbar-sm"
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: 'bottom',
@@ -202,6 +202,13 @@ function ResponsiveAppBar() {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
+              <MenuItem onClick={() => {}}>Connect wallet</MenuItem>
+              {accountMenu.map(([page, location]) => (
+                <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
+                  {page}
+                </MenuItem>
+              ))}
+              <MenuItem onClick={() => {}}>Log out</MenuItem>
             </Menu>
           </NavMenuContainer>
           <NavMenuContainer sx={{ display: { xs: 'none', sm: 'flex' } }}>
@@ -252,6 +259,9 @@ function ResponsiveAppBar() {
               }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+              }}
             >
               <MenuItem onClick={() => {}}>Connect wallet</MenuItem>
               {accountMenu.map(([page, location]) => (
