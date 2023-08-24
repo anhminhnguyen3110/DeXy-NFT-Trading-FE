@@ -57,7 +57,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: '100%',
 }))
 
-export default function SearchBar({ uniqueId, value, handleChange, searchResult }) {
+export default function SearchBar({
+  uniqueId,
+  value,
+  handleChange,
+  searchResult,
+  isTopMenuSearch = true,
+}) {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleClose = () => {
@@ -79,25 +85,29 @@ export default function SearchBar({ uniqueId, value, handleChange, searchResult 
           onKeyUp={(e) => setAnchorEl(e.currentTarget)}
         />
       </Search>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        onClick={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        disableAutoFocus
-        disableEnforceFocus
-        container={() => (uniqueId ? document.getElementById(uniqueId) : document.body)}
-      >
-        {searchResult}
-      </Popover>
+      {!isTopMenuSearch ? (
+        <></>
+      ) : (
+        <Popover
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          onClick={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          disableAutoFocus
+          disableEnforceFocus
+          container={() => (uniqueId ? document.getElementById(uniqueId) : document.body)}
+        >
+          {searchResult}
+        </Popover>
+      )}
     </>
   )
 }
