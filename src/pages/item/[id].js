@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import { Typography, styled, useTheme } from '@mui/material'
+import { Stack, Typography, styled, useTheme } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import ActionAreaCard from '@/components/Card'
 import CoreDetailsSection from '@/layouts/item/coreDetailsSection'
@@ -32,16 +32,20 @@ const CarouselStyled = styled(Carousel)(({ theme }) => ({
 const ImageContainer = styled('div')(({ theme }) => ({
   position: 'relative',
   width: '100%',
-  height: '100%',
+  aspectRatio: '1/1',
   minHeight: '15rem',
-  maxHeight: '30rem',
+  maxHeight: '32rem',
   display: 'flex',
   justifyContent: 'center',
-  '& img': {
-    width: 'unset !important',
-    maxWidth: '100%',
+  backgroundColor: 'black',
+  borderRadius: theme.shape.borderRadius,
+  overflow: 'hidden',
+  [theme.breakpoints.down('md')]: {
+    maxWidth: 'min(24rem, 100%)',
     marginInline: 'auto',
-    borderRadius: theme.shape.borderRadius,
+  },
+  '& img': {
+    objectFit: 'contain',
   },
 }))
 
@@ -56,7 +60,6 @@ export default function ItemDetail() {
       theme
         ? {
             superLargeDesktop: {
-              // the naming can be any, depends on you.
               breakpoint: { max: 4000, min: theme.breakpoints.values.xl },
               items: 5,
             },
@@ -85,11 +88,11 @@ export default function ItemDetail() {
         </Grid>
         <Grid xs={12} md={5}>
           <ImageContainer>
-            <Image src="/bean.jpeg" alt={`image-${id}`} fill priority />
+            <Image src="/bean.png" alt={`image-${id}`} fill priority />
           </ImageContainer>
         </Grid>
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid xs={12} md={7}>
         <Typography variant="h3" gutterBottom>
           Description
         </Typography>
@@ -101,17 +104,16 @@ export default function ItemDetail() {
           consequuntur.
         </Typography>
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid xs={12} md={5}>
         <Typography variant="h3" gutterBottom>
           Asset detail
         </Typography>
-        <Typography variant="body1" maxWidth="60ch">
-          Lorem ipsum dolor sit amet. Sed iure ipsam ut libero odit aut earum assumenda aut esse
-          perspiciatis sit voluptates consequuntur sit omnis commodi qui neque dolores. Ut quia quia
-          ab fugiat velit et rerum aspernatur vel veniam asperiores sed voluptas aperiam qui
-          reprehenderit molestiae et quae quas. Vel dicta similique aut natus illum est mollitia
-          consequuntur.
-        </Typography>
+        <Stack gap="0.2rem">
+          <Typography variant="body1">Created date: 19/08/2023</Typography>
+          <Typography variant="body1">Created by: abcxyz</Typography>
+          <Typography variant="body1">Owned by: abcxyz</Typography>
+          <Typography variant="body1">Fix price: 0.09</Typography>
+        </Stack>
       </Grid>
       <Grid xs={12}>
         <Typography variant="h3" gutterBottom>

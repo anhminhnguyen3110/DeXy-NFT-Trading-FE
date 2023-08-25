@@ -35,10 +35,16 @@ const TableCellHeader = styled(TableCell)(({ theme }) => ({
   fontSize: '1rem',
   fontWeight: 'lighter',
   color: theme.palette.text.secondary,
+  [theme.breakpoints.down('sm')]: {
+    padding: '0.4rem 0',
+  },
 }))
 
-const TableCellStyle = styled(TableCell)(() => ({
+const TableCellStyle = styled(TableCell)(({ theme }) => ({
   fontSize: '1rem',
+  [theme.breakpoints.down('sm')]: {
+    padding: '0.4rem 0',
+  },
 }))
 
 const TableHeadColumnStyled = styled(TableHead)(({ theme }) => ({
@@ -88,20 +94,21 @@ const DynamicTableMobile = ({ data, columns }) => {
           <TableBody>
             {data.map((row, id) => (
               <TableRowStyle key={`sm-table-row-${id}`}>
-                <Stack spacing={2} component="td">
+                <Stack component="td" justifyContent="center" paddingBlock={1}>
                   {columns.map((column) => (
                     <Stack
                       key={`sm-table-row-${id}-${column.id}`}
                       direction="row"
-                      spacing={2}
                       sx={{ flexGrow: 1 }}
+                      alignItems="center"
+                      gap={1}
                     >
-                      <TableCellHeader align={'left'} sx={{ flexBasis: '30%' }} component="div">
+                      <TableCellHeader align={'left'} sx={{ flexBasis: '35%' }} component="div">
                         {column.label}
                       </TableCellHeader>
                       <TableCellStyle
                         align={column.align || 'left'}
-                        sx={{ flexBasis: '70%' }}
+                        sx={{ flexBasis: '65%' }}
                         component="div"
                       >
                         {row[column.id]}

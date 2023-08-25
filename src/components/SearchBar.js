@@ -19,7 +19,6 @@ const Search = styled('div')(({ theme }) => ({
   },
   [theme.breakpoints.up('sm')]: {
     border: `1px solid ${theme.palette.grey[400]}`,
-    marginLeft: theme.spacing(1),
     width: 'auto',
   },
 }))
@@ -85,9 +84,7 @@ export default function SearchBar({
           onKeyUp={(e) => setAnchorEl(e.currentTarget)}
         />
       </Search>
-      {!isTopMenuSearch ? (
-        <></>
-      ) : (
+      {searchResult &&
         <Popover
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
@@ -103,11 +100,10 @@ export default function SearchBar({
           }}
           disableAutoFocus
           disableEnforceFocus
-          container={() => (uniqueId ? document.getElementById(uniqueId) : document.body)}
         >
           {searchResult}
         </Popover>
-      )}
+      }
     </>
   )
 }
