@@ -3,7 +3,12 @@ import Head from 'next/head'
 import { Avatar, Box, Button, Grid, Menu, MenuItem, Stack, Typography } from '@mui/material'
 import AccountEdit from '../layouts/account/AccountEdit'
 import styled from '@emotion/styled'
-import { ExpandMoreIconStyled, FilterTextStyled, filterOptionsList } from './marketplace'
+import {
+  ExpandMoreIconStyled,
+  FilterTextStyled,
+  ListGridStyle,
+  filterOptionsList,
+} from './marketplace'
 import SearchBar from '@/components/SearchBar'
 import { InputBaseStyledMarketplace } from '@/components/TextFieldWithLabel'
 import dummyData from '@/dummy-data/item-list'
@@ -38,19 +43,6 @@ const EditButton = styled(Button)(({ theme }) => ({
 
 const StackSearchFilterStyled = styled(Stack)(({ theme }) => ({
   justifySelf: 'flex-end',
-}))
-
-const ListGridStyle = styled(Grid)(({ theme }) => ({
-  paddingTop: '2.15rem',
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(205px, 1fr))',
-  columnGap: '2.5rem',
-  rowGap: '2rem',
-  [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: 'repeat(2, minmax(10.4375rem, 1fr))',
-    columnGap: '1rem',
-    rowGap: '1rem',
-  },
 }))
 
 const EditButtonStyled = styled(EditButton)(({ theme }) => ({
@@ -142,7 +134,7 @@ export default function Account() {
               </EditButtonStyled>
             </Stack>
           </Grid>
-          <Grid item xs={12} sm={12} md={12} lg={9}>
+          <Grid item xs={12} sm={12} md={12} lg={8}>
             <Stack direction="column" md={12} lg={9}>
               <DeXyTypography variant="h2">DeXy Items: </DeXyTypography>
               <StackSearchFilterStyled spacing={1} direction={{ md: 'column', lg: 'row' }}>
