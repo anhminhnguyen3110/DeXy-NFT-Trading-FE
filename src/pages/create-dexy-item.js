@@ -3,6 +3,7 @@ import { Button, Stack, Typography, styled } from '@mui/material'
 import InputFileUpload from '@/components/UploadButton'
 import { InputBaseStyledCreateItem } from '@/components/TextFieldWithLabel'
 import CheckboxComponent from '@/components/CheckBox'
+import { useSnackbar } from 'notistack'
 
 const StackStyled = styled(Stack)(({ theme }) => ({
   paddingLeft: '10rem',
@@ -64,11 +65,15 @@ const StackCheckBox = styled(Stack)(({ theme }) => ({
     paddingTop: '1.75rem',
   },
 }))
-const TypographyStyled = styled(Typography)(({ theme }) => ({
+
+const TypographyStyled = styled(Typography)(() => ({
   paddingTop: '0.4rem',
   paddingBottom: '0.4rem',
 }))
+
 export default function CreateDexyItem() {
+  const { enqueueSnackbar } = useSnackbar()
+
   return (
     <>
       <Head>
@@ -88,7 +93,9 @@ export default function CreateDexyItem() {
           <UploadTypography variant="body1" component="p">
             JPG, PNG, GIF, WEBP. Max 5mb.
           </UploadTypography>
-          <InputFileUpload />
+          <InputFileUpload
+            onChange={() => enqueueSnackbar('Failed to upload image', { variant: 'error' })}
+          />
         </UploadBox>
 
         <HeadingH2Styled variant="h2" component="h2">
