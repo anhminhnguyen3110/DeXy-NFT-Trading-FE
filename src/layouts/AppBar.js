@@ -95,7 +95,7 @@ const SearchResultContainer = styled(Paper)(({ theme }) => ({
 
 const pages = [
   ['Marketplace', '/'],
-  ['Create', '/create'],
+  ['Create', '/create-dexy-item'],
 ]
 const accountMenu = [
   ['Create wallet', 'https://metamask.io/'],

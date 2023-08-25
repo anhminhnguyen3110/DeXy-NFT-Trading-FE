@@ -52,7 +52,7 @@ const PaginationBoxStyled = styled(Box)(({ theme }) => ({
   },
 }))
 
-const ListGridStyle = styled(Grid)(({ theme }) => ({
+export const ListGridStyle = styled(Grid)(({ theme }) => ({
   paddingTop: '2.15rem',
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(205px, 1fr))',
@@ -60,6 +60,12 @@ const ListGridStyle = styled(Grid)(({ theme }) => ({
   rowGap: '2rem',
   [theme.breakpoints.down('lg')]: {
     gridTemplateColumns: 'repeat(2, minmax(10.4375rem, 1fr))',
+    columnGap: '1rem',
+    rowGap: '1rem',
+    paddingTop: '0.86rem',
+  },
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'repeat(1, minmax(10.4375rem, 1fr))',
     columnGap: '1rem',
     rowGap: '1rem',
     paddingTop: '0.86rem',

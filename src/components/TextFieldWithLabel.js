@@ -43,3 +43,7 @@ export const InputBaseStyledMarketplace = styled(InputBaseStyled)(({ theme }) =>
   maxWidth: '3.5625rem',
   paddingLeft: theme.spacing(1),
 }))
+
+export const InputBaseStyledCreateItem = styled(InputBaseStyled)(({ theme }) => ({
+  paddingTop: theme.spacing(1),
+}))
