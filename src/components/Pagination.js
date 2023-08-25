@@ -4,10 +4,10 @@ import { Pagination, Stack, styled } from '@mui/material'
 const StyledPagination = styled(Pagination)(({ theme }) => ({
   '& .MuiPaginationItem-root': {
     '&.Mui-selected': {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.dark,
     },
     '&:hover': {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.dark,
     },
   },
   [theme.breakpoints.down('sm')]: {
