@@ -76,10 +76,10 @@ const COMMON = {
   grey: GREY,
   divider: GREY[500],
   action: {
-    selected: PRIMARY.main,
+    selected: alpha(PRIMARY.main, 0.08),
     disabled: GREY[500_80],
     disabledBackground: GREY[500_24],
-    focus: PRIMARY.main,
+    focus: alpha(PRIMARY.main, 0.08),
     disabledOpacity: 0.5,
   },
 }
