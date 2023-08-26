@@ -54,6 +54,7 @@ const CreateButton = styled(Button)(({ theme }) => ({
   width: '9.788rem',
   color: theme.palette.common.black,
   backgroundColor: theme.palette.common.white,
+  marginTop: '1.25rem',
   [theme.breakpoints.down('md')]: {
     width: '100%',
   },
@@ -117,11 +118,17 @@ export default function CreateDexyItem() {
         <HeadingH2Styled variant="h2" component="h2">
           Start Price
         </HeadingH2Styled>
+        <TypographyStyled variant="body1" component="p">
+          Fill in your initial cost of Dexy item
+        </TypographyStyled>
         <InputBaseStyledCreateItem placeholder="Enter the item’s start price" />
 
         <HeadingH2Styled variant="h2" component="h2">
           Fix Price
         </HeadingH2Styled>
+        <TypographyStyled variant="body1" component="p">
+          Fill in your fixed cost to acquire Dexy item
+        </TypographyStyled>
         <InputBaseStyledCreateItem placeholder="Enter the item’s fix price" />
 
         <StackCheckBox direction="row" spacing={{ lg: 1, md: 0 }} alignItems="center">
