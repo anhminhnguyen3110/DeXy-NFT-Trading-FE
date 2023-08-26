@@ -21,6 +21,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
 import EthereumIcon from '@/components/EthereumIcon'
 import SearchBar from '@/components/SearchBar'
+import WalletConnect from './WalletConnect'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral,
@@ -107,6 +108,7 @@ function ResponsiveAppBar() {
   const router = useRouter()
   const isDesktop = useResponsive('up', 'md')
   const [searchValue, setSearchValue] = useState('')
+  const [openWalletConnect, setOpenWalletConnect] = useState(false)
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -123,6 +125,11 @@ function ResponsiveAppBar() {
 
   const handleChangeSearch = (event) => {
     setSearchValue(event.target.value)
+  }
+
+  const handleOpenWalletConnect = () => {
+    handleCloseNavMenu()
+    setOpenWalletConnect(true)
   }
 
   const renderSearchResult = () => {
@@ -202,7 +209,7 @@ function ResponsiveAppBar() {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
-              <MenuItem onClick={() => {}}>Connect wallet</MenuItem>
+              <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
               {accountMenu.map(([page, location]) => (
                 <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
                   {page}
@@ -263,7 +270,7 @@ function ResponsiveAppBar() {
                 display: { xs: 'none', sm: 'block' },
               }}
             >
-              <MenuItem onClick={() => {}}>Connect wallet</MenuItem>
+              <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
               {accountMenu.map(([page, location]) => (
                 <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
                   {page}
@@ -274,6 +281,7 @@ function ResponsiveAppBar() {
           </NavMenuContainer>
         </ToolbarStyled>
       </Container>
+      <WalletConnect open={openWalletConnect} handleClose={() => setOpenWalletConnect(false)} />
     </AppBarStyled>
   )
 }

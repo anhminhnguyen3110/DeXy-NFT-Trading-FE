@@ -84,7 +84,7 @@ export default function SearchBar({
           onKeyUp={(e) => setAnchorEl(e.currentTarget)}
         />
       </Search>
-      {searchResult &&
+      {searchResult && (
         <Popover
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
@@ -103,7 +103,7 @@ export default function SearchBar({
         >
           {searchResult}
         </Popover>
-      }
+      )}
     </>
   )
 }
