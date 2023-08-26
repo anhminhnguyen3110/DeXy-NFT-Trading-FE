@@ -37,6 +37,7 @@ const dummyData = [
     CreatedDate: '2023-08-23',
     CreatedBy: 'User3',
     OwnedBy: 'John Doe',
+    OwnedByUserAddress: '0x8f3...70da',
   },
   {
     id: 5,
@@ -45,7 +46,7 @@ const dummyData = [
     FixPrice: '0.008',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User2',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...10da',
     OwnedBy: 'User3',
   },
   {
@@ -55,7 +56,7 @@ const dummyData = [
     FixPrice: '0.011',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User1',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...10da',
     OwnedBy: 'User1',
   },
   {
@@ -65,7 +66,7 @@ const dummyData = [
     FixPrice: '0.013',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User3',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...10da',
     OwnedBy: 'User1',
   },
   {
@@ -75,7 +76,7 @@ const dummyData = [
     FixPrice: '0.009',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User2',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...20da',
     OwnedBy: 'User3',
   },
   {
@@ -85,7 +86,7 @@ const dummyData = [
     FixPrice: '0.014',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User1',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...30da',
     OwnedBy: 'User1',
   },
   {
@@ -95,7 +96,7 @@ const dummyData = [
     FixPrice: '0.010',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User3',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...40da',
     OwnedBy: 'User2',
   },
   {
@@ -106,7 +107,7 @@ const dummyData = [
     CreatedDate: '2023-08-23',
     CreatedBy: 'User3',
     OwnedBy: 'John Doe',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...50da',
   },
   {
     id: 12,
@@ -115,7 +116,7 @@ const dummyData = [
     FixPrice: '0.010',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User3',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x8f3...60da',
     OwnedBy: 'John Doe',
   },
 ]
