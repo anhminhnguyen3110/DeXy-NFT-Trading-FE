@@ -31,11 +31,6 @@ const h1Style = {
   fontSize: { xs: '38px', md: 'h1.fontSize' },
 }
 
-const pages = [
-  ['Marketplace', '/'],
-  ['Create', '/create-dexy-item'],
-]
-
 export default function Home() {
   const router = useRouter()
 
