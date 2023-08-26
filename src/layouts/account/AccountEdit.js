@@ -4,6 +4,7 @@ import { Dialog, Avatar, IconButton, Button, styled } from '@mui/material'
 import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import TextFieldWithLabel from '../../components/TextFieldWithLabel'
+import { useSnackbar } from 'notistack'
 
 const DialogStyled = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -52,10 +53,12 @@ export default function AccountEdit({ open, handleClose, handleSubmit }) {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const fullScreen = useResponsive('down', 'sm')
+  const { enqueueSnackbar } = useSnackbar()
 
   const handleClickSubmit = () => {
     handleSubmit(avatar, username, email)
     handleClose()
+    enqueueSnackbar('Profile updated', { variant: 'success' })
   }
 
   return (
