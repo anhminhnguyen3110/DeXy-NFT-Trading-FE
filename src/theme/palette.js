@@ -74,7 +74,7 @@ const COMMON = {
   warning: { ...WARNING, contrastText: GREY[800] },
   error: { ...ERROR, contrastText: '#fff' },
   grey: GREY,
-  divider: GREY[500],
+  divider: GREY[400],
   action: {
     selected: alpha(PRIMARY.main, 0.08),
     disabled: GREY[500_80],
