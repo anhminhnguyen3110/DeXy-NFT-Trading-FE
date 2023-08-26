@@ -1,8 +1,9 @@
+import useResponsive from '@/hooks/useResponsive'
 import { Stack, Typography, Button, Avatar, styled } from '@mui/material'
 import DynamicTable from '@/components/DynamicTable'
 import PaginationButtons from '@/components/Pagination'
 import EthereumIcon from '@/components/EthereumIcon'
-import useResponsive from '@/hooks/useResponsive'
+import AddShoppingCartRoundedIcon from '@mui/icons-material/AddShoppingCartRounded'
 
 const BoldText = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
@@ -89,9 +90,14 @@ export default function CoreDetailsSection() {
             <Button fullWidth variant="contained">
               Take over
             </Button>
-            <Button fullWidth variant="outlined">
-              Make an offer
-            </Button>
+            <Stack direction="row" gap={1.75} sx={{ display: { xs: 'flex', sm: 'contents' } }}>
+              <Button fullWidth variant="outlined">
+                Make an offer
+              </Button>
+              <Button variant="contained" sx={{ minWidth: '3.5rem' }}>
+                <AddShoppingCartRoundedIcon sx={{ fontSize: { xs: '1.4rem', sm: '1.6rem' } }} />
+              </Button>
+            </Stack>
           </Stack>
         </Stack>
       </Stack>

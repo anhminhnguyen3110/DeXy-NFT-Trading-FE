@@ -19,13 +19,14 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
+import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import EthereumIcon from '@/components/EthereumIcon'
 import SearchBar from '@/components/SearchBar'
 import WalletConnect from './WalletConnect'
+import ShoppingCart from './ShoppingCart'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral,
-  width: '100vw',
 }))
 
 const Logo = styled(Typography)(({ theme }) => ({
@@ -43,7 +44,7 @@ const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     '&:has(.MuiInputBase-input:focus)': {
-      '& #logo-link, & #nav-menu-button': {
+      '& .hide-on-search-focus': {
         display: 'none',
       },
     },
@@ -110,6 +111,7 @@ function ResponsiveAppBar() {
   const isDesktop = useResponsive('up', 'md')
   const [searchValue, setSearchValue] = useState('')
   const [openWalletConnect, setOpenWalletConnect] = useState(false)
+  const [openShoppingCart, setOpenShoppingCart] = useState(false)
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -131,6 +133,11 @@ function ResponsiveAppBar() {
   const handleOpenWalletConnect = () => {
     handleCloseNavMenu()
     setOpenWalletConnect(true)
+  }
+
+  const handleOpenShoppingCart = () => {
+    handleCloseNavMenu()
+    setOpenShoppingCart(true)
   }
 
   const renderSearchResult = () => {
@@ -160,7 +167,7 @@ function ResponsiveAppBar() {
     <AppBarStyled position="static">
       <Container maxWidth="xl">
         <ToolbarStyled disableGutters variant="dense">
-          <Link href="/" id="logo-link">
+          <Link href="/" className="hide-on-search-focus">
             <Logo>DeXy</Logo>
           </Link>
           {isDesktop && (
@@ -177,7 +184,17 @@ function ResponsiveAppBar() {
               searchResult={renderSearchResult()}
             />
             <IconButton
-              id="nav-menu-button"
+              className="hide-on-search-focus"
+              size="large"
+              aria-label="shopping cart"
+              aria-controls="shopping-cart"
+              aria-haspopup="true"
+              onClick={handleOpenShoppingCart}
+            >
+              <ShoppingCartRoundedIcon />
+            </IconButton>
+            <IconButton
+              className="hide-on-search-focus"
               size="large"
               aria-label="menu"
               aria-controls="menu-appbar-sm"
@@ -245,11 +262,19 @@ function ResponsiveAppBar() {
             ))}
             <IconButton
               size="large"
+              aria-label="shopping cart"
+              aria-controls="shopping-cart"
+              aria-haspopup="true"
+              onClick={handleOpenShoppingCart}
+            >
+              <ShoppingCartRoundedIcon />
+            </IconButton>
+            <IconButton
+              size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              sx={{ marginLeft: '1rem' }}
             >
               <AccountBalanceWalletRoundedIcon />
             </IconButton>
@@ -283,6 +308,7 @@ function ResponsiveAppBar() {
         </ToolbarStyled>
       </Container>
       <WalletConnect open={openWalletConnect} handleClose={() => setOpenWalletConnect(false)} />
+      <ShoppingCart open={openShoppingCart} handleClose={() => setOpenShoppingCart(false)} />
     </AppBarStyled>
   )
 }
