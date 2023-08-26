@@ -25,6 +25,7 @@ import WalletConnect from './WalletConnect'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral,
+  width: '100vw',
 }))
 
 const Logo = styled(Typography)(({ theme }) => ({
