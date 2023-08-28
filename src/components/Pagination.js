@@ -1,13 +1,16 @@
 import { useState } from 'react'
-import { Pagination, Stack, styled } from '@mui/material'
+import { Pagination, Stack, styled, alpha } from '@mui/material'
 
 const StyledPagination = styled(Pagination)(({ theme }) => ({
   '& .MuiPaginationItem-root': {
     '&.Mui-selected': {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette.primary.light,
+      '&:hover': {
+        backgroundColor: alpha(theme.palette.primary.light, 0.6),
+      },
     },
     '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette.primary.light,
     },
   },
   [theme.breakpoints.down('sm')]: {

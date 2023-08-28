@@ -19,9 +19,8 @@ const MarketPlaceStyled = styled(Typography)(({ theme }) => ({
   },
 }))
 
-export const InputBaseStyledMarketplace = styled(InputBase)(({ theme }) => ({
-  maxWidth: '3.5625rem',
-  paddingLeft: theme.spacing(1),
+export const InputBaseStyled = styled(InputBase)(() => ({
+  maxWidth: '4rem',
 }))
 
 export const ExpandMoreIconStyled = styled(ExpandMoreIcon)(() => ({
@@ -119,8 +118,8 @@ export default function MarketPlace() {
           <SearchBar isTopMenuSearch={false} />
           <Box sx={{ display: 'flex', flexDirection: 'row', spacing: 1 }}>
             <FilterTextStyled variant="body1">Price range</FilterTextStyled>
-            <InputBaseStyledMarketplace />
-            <InputBaseStyledMarketplace />
+            <InputBaseStyled type="number" />
+            <InputBaseStyled type="number" />
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <FilterTextStyled variant="body1">{filterOption}</FilterTextStyled>

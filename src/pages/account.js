@@ -5,13 +5,13 @@ import { Avatar, Box, Button, Grid, Menu, MenuItem, Stack, Typography } from '@m
 import AccountEdit from '../layouts/account/AccountEdit'
 import styled from '@emotion/styled'
 import {
+  InputBaseStyled,
   ExpandMoreIconStyled,
   FilterTextStyled,
   ListGridStyle,
   filterOptionsList,
 } from './marketplace'
 import SearchBar from '@/components/SearchBar'
-import { InputBaseStyledMarketplace } from '@/components/TextFieldWithLabel'
 import dummyData from '@/dummy-data/item-list'
 import ActionAreaCard from '@/components/Card'
 import PaginationButtons from '@/components/Pagination'
@@ -144,8 +144,8 @@ export default function Account() {
                 <SearchBar isTopMenuSearch={false} />
                 <Box sx={{ display: 'flex', flexDirection: 'row', spacing: 1 }}>
                   <FilterTextStyled variant="body1">Price range</FilterTextStyled>
-                  <InputBaseStyledMarketplace />
-                  <InputBaseStyledMarketplace />
+                  <InputBaseStyled type="number" />
+                  <InputBaseStyled type="number" />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                   <FilterTextStyled variant="body1">{filterOption}</FilterTextStyled>
