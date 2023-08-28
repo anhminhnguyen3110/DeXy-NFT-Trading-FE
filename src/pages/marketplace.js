@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Box, Grid, Menu, MenuItem, Stack, Typography } from '@mui/material'
 import styled from '@emotion/styled'
 import SearchBar from '@/components/SearchBar'
-import { InputBaseStyledMarketplace } from '@/components/TextFieldWithLabel'
+import InputBase from '@/components/InputBase'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useState, useEffect } from 'react'
 import dummyData from '@/dummy-data/item-list'
@@ -19,12 +19,17 @@ const MarketPlaceStyled = styled(Typography)(({ theme }) => ({
   },
 }))
 
-export const ExpandMoreIconStyled = styled(ExpandMoreIcon)(({ theme }) => ({
+export const InputBaseStyledMarketplace = styled(InputBase)(({ theme }) => ({
+  maxWidth: '3.5625rem',
+  paddingLeft: theme.spacing(1),
+}))
+
+export const ExpandMoreIconStyled = styled(ExpandMoreIcon)(() => ({
   alignSelf: 'center',
   transition: 'transform 0.3s',
   ':hover': {
     cursor: 'pointer',
-    transform: 'scale(1.4)',
+    transform: 'scale(1.2)',
   },
 }))
 

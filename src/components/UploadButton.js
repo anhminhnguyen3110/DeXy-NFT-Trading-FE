@@ -1,6 +1,4 @@
-import * as React from 'react'
-import { styled } from '@mui/material'
-import { Button, SvgIcon } from '@mui/material'
+import { Button, SvgIcon, styled } from '@mui/material'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 
 const VisuallyHiddenInput = styled('input')(() => ({
@@ -18,20 +16,12 @@ const VisuallyHiddenInput = styled('input')(() => ({
 const ButtonStyled = styled(Button)(({ theme }) => ({
   color: theme.palette.primary.main,
   borderColor: theme.palette.primary.main,
-  marginTop: '0.94rem',
-  marginLeft: '2.18rem',
-  marginBottom: '1rem',
-  maxWidth: '8.18856rem',
-  [theme.breakpoints.down('sm')]: {
-    marginTop: '1rem',
-    marginLeft: '0.94rem',
-    marginBottom: '1.5rem',
-  },
+  maxWidth: '8.2rem',
 }))
 
 export default function InputFileUpload({ onChange, ...props }) {
   return (
-    <ButtonStyled component="label" role={undefined} tabIndex={-1} variant="outlined" {...props}>
+    <ButtonStyled component="label" variant="outlined" {...props}>
       <SvgIcon component={FileUploadIcon} />
       Upload
       <VisuallyHiddenInput onChange={onChange} type="file" />

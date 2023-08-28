@@ -1,8 +1,7 @@
-import * as React from 'react'
-import Checkbox from '@mui/material/Checkbox'
-import { styled } from '@mui/material/styles'
+import { Checkbox, styled } from '@mui/material'
 
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
+  paddingInline: 0,
   '& .MuiSvgIcon-root': {
     width: '1.5rem',
     height: '1.5rem',
@@ -11,5 +10,12 @@ const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
 }))
 
 export default function CheckboxComponent({ label = 'label', defaultChecked = false, ...props }) {
-  return <StyledCheckbox label={label} defaultChecked={defaultChecked ? true : false} {...props} />
+  return (
+    <StyledCheckbox
+      disableRipple
+      label={label}
+      defaultChecked={defaultChecked ? true : false}
+      {...props}
+    />
+  )
 }
