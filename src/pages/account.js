@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { Avatar, Box, Button, Grid, Menu, MenuItem, Stack, Typography } from '@mui/material'
 import AccountEdit from '../layouts/account/AccountEdit'
 import styled from '@emotion/styled'
@@ -73,6 +74,8 @@ const TransactionHistoryTypography = styled(Typography)(({ theme }) => ({
 export default function Account() {
   const [openEdit, setOpenEdit] = useState(false)
   const [transactionData, setTransactionData] = useState([])
+  const router = useRouter()
+
   const handleCloseEdit = () => {
     setOpenEdit(false)
   }
@@ -185,6 +188,7 @@ export default function Account() {
                     image={item.image}
                     title={item.title}
                     price={item.FixPrice}
+                    onClick={() => router.push(`/item/${item.id}`)}
                   />
                 ))}
               </ListGridStyle>

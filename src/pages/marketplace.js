@@ -1,5 +1,6 @@
 import Head from 'next/head'
-import { Box, Grid, Menu, MenuItem, Paper, Stack, Typography } from '@mui/material'
+import { useRouter } from 'next/router'
+import { Box, Grid, Menu, MenuItem, Stack, Typography } from '@mui/material'
 import styled from '@emotion/styled'
 import SearchBar from '@/components/SearchBar'
 import { InputBaseStyledMarketplace } from '@/components/TextFieldWithLabel'
@@ -74,6 +75,7 @@ export const ListGridStyle = styled(Grid)(({ theme }) => ({
 
 export default function MarketPlace() {
   const [itemList, setItemList] = useState([])
+  const router = useRouter()
 
   useEffect(() => {
     setItemList(dummyData)
@@ -150,6 +152,7 @@ export default function MarketPlace() {
               image={item.image}
               title={item.title}
               price={item.FixPrice}
+              onClick={() => router.push(`/item/${item.id}`)}
             />
           ))}
         </ListGridStyle>

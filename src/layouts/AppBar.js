@@ -97,8 +97,8 @@ const SearchResultContainer = styled(Paper)(({ theme }) => ({
 }))
 
 const pages = [
-  ['Marketplace', '/'],
-  ['Create', '/create-dexy-item'],
+  ['Marketplace', '/marketplace'],
+  ['Create', '/create'],
 ]
 const accountMenu = [
   ['Create wallet', 'https://metamask.io/'],
@@ -142,9 +142,9 @@ function ResponsiveAppBar() {
 
   const renderSearchResult = () => {
     const searchResult = [
-      ['Space doge 1', 'abcxyz', '/space-doge'],
-      ['Space doge 2', 'abcxyz', '/space-doge'],
-      ['Space doge 3', 'abcxyz', '/space-doge'],
+      ['Space doge 1', 'abcxyz', '/item/1'],
+      ['Space doge 2', 'abcxyz', '/item/2'],
+      ['Space doge 3', 'abcxyz', '/item/3'],
     ]
     return (
       <SearchResultContainer>

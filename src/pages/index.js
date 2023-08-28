@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Grid, Stack, Typography, Button, styled } from '@mui/material'
@@ -39,7 +38,7 @@ export default function Home() {
   }
 
   const handleClickCreate = () => {
-    router.push(`/create-dexy-item`)
+    router.push(`/create`)
   }
 
   return (
