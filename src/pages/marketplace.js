@@ -8,7 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useState, useEffect } from 'react'
 import dummyData from '@/dummy-data/item-list'
 import PaginationButtons from '@/components/Pagination'
-import { ActionAreaCardWithUserAddress } from '@/components/Card'
+import ActionAreaCard from '@/components/Card'
 
 const MarketPlaceStyled = styled(Typography)(({ theme }) => ({
   paddingTop: '2.31rem',
@@ -145,10 +145,10 @@ export default function MarketPlace() {
         </Stack>
 
         <ListGridStyle container columnGap={6} rowGap={4}>
-          {itemList.map((item, id) => (
-            <ActionAreaCardWithUserAddress
+          {itemList.map((item) => (
+            <ActionAreaCard
               userAddress={item.OwnedByUserAddress}
-              key={id}
+              key={`marketplace-item-${item.id}`}
               image={item.image}
               title={item.title}
               price={item.FixPrice}
