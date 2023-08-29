@@ -14,6 +14,13 @@ const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {string} label label of checkbox
+ * @param {boolean} defaultChecked default value
+ * @param {object} props other props
+ * @returns {JSX.Element}
+ */
 export default function CheckboxComponent({ label = 'label', defaultChecked = false, ...props }) {
   return (
     <StyledCheckbox

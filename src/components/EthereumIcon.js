@@ -3,6 +3,12 @@
  * Created date: 18/08/2023
  * Last modified Date: 29/08/2023
  */
+
+/**
+ *
+ * @param {int} size icon size in px
+ * @returns {JSX.Element}
+ */
 export default function EthereumIcon({ size = 13 }) {
   return (
     <div style={{ width: size, height: (20 * size) / 11 }}>

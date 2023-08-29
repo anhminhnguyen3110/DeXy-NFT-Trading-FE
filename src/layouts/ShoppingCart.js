@@ -47,6 +47,12 @@ const TotalTextStyle = styled(Typography)(() => ({
   fontSize: '1.5rem',
 }))
 
+/**
+ * Shopping cart popup
+ * @param {boolean} open open state
+ * @param {function} handleClose function to handle close
+ * @returns {JSX.Element}
+ */
 export default function ShoppingCart({ open, handleClose }) {
   const fullScreen = useResponsive('down', 'sm')
   const { enqueueSnackbar } = useSnackbar()

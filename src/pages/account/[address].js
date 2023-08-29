@@ -27,6 +27,10 @@ const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
   alignSelf: 'center',
 }))
 
+/**
+ * Account detail page
+ * @returns {JSX.Element}
+ */
 export default function Account() {
   const [openEdit, setOpenEdit] = useState(false)
   const [transactionData, setTransactionData] = useState([])
@@ -36,6 +40,7 @@ export default function Account() {
   const [userInfo, setUserInfo] = useState({})
   const editable = address == userList[0].address
 
+  // get item list and transaction history of user
   useEffect(() => {
     if (userInfo) {
       const data = dummyData.filter((item) => item.OwnedByUserAddress === userInfo.address)
@@ -46,6 +51,7 @@ export default function Account() {
     }
   }, [router, userInfo])
 
+  // get user info from address
   useEffect(() => {
     if (address) {
       const user = userList.filter((item) => item.address == address)[0]

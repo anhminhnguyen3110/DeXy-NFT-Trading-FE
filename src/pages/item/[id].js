@@ -55,8 +55,11 @@ const ImageContainer = styled('div')(({ theme }) => ({
   },
 }))
 
+/**
+ * Item detail page
+ * @returns {JSX.Element}
+ */
 export default function ItemDetail() {
-  // get the id from the url query
   const router = useRouter()
   const { id } = router.query
   const theme = useTheme()

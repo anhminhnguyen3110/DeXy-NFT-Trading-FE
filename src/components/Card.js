@@ -20,6 +20,15 @@ const CardStyled = styled(Card)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {string} image image url
+ * @param {string} title item title
+ * @param {string} price item price
+ * @param {function} onClick click handler
+ * @param {string} userAddress user wallet address
+ * @returns {JSX.Element}
+ */
 export default function ActionAreaCard({ image, title, price, onClick, userAddress }) {
   return (
     <CardStyled>

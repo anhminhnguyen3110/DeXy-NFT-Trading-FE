@@ -34,6 +34,10 @@ const members = [
   },
 ]
 
+/**
+ * Sitewide footer
+ * @returns {JSX.Element}
+ */
 function Footer() {
   return (
     <FooterStyle>

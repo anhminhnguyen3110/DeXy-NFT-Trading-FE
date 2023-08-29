@@ -47,6 +47,11 @@ const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
   alignSelf: 'center',
 }))
 
+/**
+ * Display a list of item cards with filter options and pagination
+ * @param {JSX.Element} children item cards to display
+ * @returns {JSX.Element}
+ */
 export default function ItemList({ children }) {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'

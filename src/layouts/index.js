@@ -27,6 +27,11 @@ const MainStyle = styled(Container)(({ theme }) => ({
   },
 }))
 
+/**
+ * Sitewide layout
+ * @param {JSX.Element} children page content
+ * @returns {JSX.Element}
+ */
 export default function Layout({ children }) {
   return (
     <RootStyle>

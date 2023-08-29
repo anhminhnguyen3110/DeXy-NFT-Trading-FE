@@ -38,6 +38,10 @@ const InputBaseStyled = styled(InputBase)(({ theme }) => ({
   paddingTop: theme.spacing(0.75),
 }))
 
+/**
+ * Create item page
+ * @returns {JSX.Element}
+ */
 export default function CreateDexyItem() {
   const { enqueueSnackbar } = useSnackbar()
 

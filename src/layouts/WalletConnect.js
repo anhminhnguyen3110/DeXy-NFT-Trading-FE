@@ -63,6 +63,12 @@ const SelectStyled = styled(Select)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {boolean} open open state
+ * @param {function} handleClose function to handle close
+ * @returns
+ */
 export default function WalletConnect({ open, handleClose }) {
   const fullScreen = useResponsive('down', 'sm')
   const [wallet, setWallet] = useState('metamask')

@@ -28,6 +28,13 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {int} spacing spacing between buttons
+ * @param {int} pageCount number of pages
+ * @param {object} props other props
+ * @returns {JSX.Element}
+ */
 export default function PaginationButtons({ spacing = 10, pageCount = 4, ...props }) {
   const [page, setPage] = useState(1)
 

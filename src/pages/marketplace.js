@@ -11,10 +11,15 @@ import ActionAreaCard from '@/components/Card'
 import dummyData from '@/dummy-data/item-list'
 import ItemList from '@/layouts/marketplace/ItemList'
 
+/**
+ * Marketplace page
+ * @returns {JSX.Element}
+ */
 export default function Marketplace() {
   const [itemList, setItemList] = useState([])
   const router = useRouter()
 
+  // get item list
   useEffect(() => {
     setItemList(dummyData)
   }, [])

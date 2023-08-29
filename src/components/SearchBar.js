@@ -77,6 +77,15 @@ const StyledInputBase = styled(InputBase, {
   width: '100%',
 }))
 
+/**
+ *
+ * @param {string} uniqueId unique id for search bar
+ * @param {string} value search value
+ * @param {function} handleChange search change handler
+ * @param {JSX.Element} searchResult search results to display
+ * @param {boolean} shrink shrink search bar to icon on mobile
+ * @returns {JSX.Element}
+ */
 export default function SearchBar({ uniqueId, value, handleChange, searchResult, shrink }) {
   const [anchorEl, setAnchorEl] = useState(null)
 

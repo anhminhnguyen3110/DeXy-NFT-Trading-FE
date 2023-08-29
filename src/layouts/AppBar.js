@@ -110,6 +110,10 @@ const accountMenu = [
   ['Account', '/account/0x8f3...70da'],
 ]
 
+/**
+ * Sitewide app bar
+ * @returns {JSX.Element}
+ */
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const router = useRouter()
@@ -181,6 +185,8 @@ function ResponsiveAppBar() {
               <Typography fontSize="1.25rem">Etherium</Typography>
             </Stack>
           )}
+
+          {/* Mobile navigation menu */}
           <NavMenuContainer sx={{ display: { xs: 'flex', sm: 'none' } }}>
             <SearchBar
               uniqueId="app-search-bar-sm"
@@ -242,6 +248,8 @@ function ResponsiveAppBar() {
               <MenuItem onClick={() => {}}>Log out</MenuItem>
             </Menu>
           </NavMenuContainer>
+
+          {/* Desktop navigation menu */}
           <NavMenuContainer sx={{ display: { xs: 'none', sm: 'flex' } }}>
             <div
               style={{

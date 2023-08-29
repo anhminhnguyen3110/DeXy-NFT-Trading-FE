@@ -24,6 +24,12 @@ const ButtonStyled = styled(Button)(({ theme }) => ({
   maxWidth: '8.2rem',
 }))
 
+/**
+ *
+ * @param {function} onChange function to handle change
+ * @param {object} props other props
+ * @returns {JSX.Element}
+ */
 export default function InputFileUpload({ onChange, ...props }) {
   return (
     <ButtonStyled component="label" variant="outlined" {...props}>

@@ -54,6 +54,11 @@ const rows = [
   },
 ]
 
+/**
+ * Core details section for an item including:
+ * name, owner, price, history, action buttons
+ * @returns {JSX.Element}
+ */
 export default function CoreDetailsSection() {
   const isSm = useResponsive('down', 'sm')
 

@@ -15,6 +15,14 @@ const InputLabelStyled = styled(InputLabel)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {string} label label of text field
+ * @param {string} value value of text field
+ * @param {function} onChange function to handle change
+ * @param {object} props other props
+ * @returns {JSX.Element}
+ */
 export default function TextFieldWithLabel({ label, value, onChange, ...props }) {
   return (
     <FormControl fullWidth variant="standard">

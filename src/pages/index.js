@@ -37,6 +37,10 @@ const StyledImage = styled('img')(({ theme }) => ({
   },
 }))
 
+/**
+ * Home page
+ * @returns {JSX.Element}
+ */
 export default function Home() {
   const router = useRouter()
 
