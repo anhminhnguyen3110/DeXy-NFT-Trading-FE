@@ -18,19 +18,20 @@ const Search = styled('div', {
   },
   transition: theme.transitions.create('width'),
   width: '2.5rem',
+  border: `1px solid ${theme.palette.grey[400]}`,
+  '&:has(.MuiInputBase-input:focus)': {
+    border: `2px solid ${theme.palette.primary.main}`,
+  },
   ...(!shrink && {
-    border: `1px solid ${theme.palette.grey[400]}`,
     width: 'auto',
   }),
   ...(shrink && {
     [theme.breakpoints.up('sm')]: {
-      border: `1px solid ${theme.palette.grey[400]}`,
       width: 'auto',
     },
     [theme.breakpoints.down('sm')]: {
       '&:has(.MuiInputBase-input:focus)': {
         width: '100%',
-        border: `1px solid ${theme.palette.grey[400]}`,
       },
     },
   }),
