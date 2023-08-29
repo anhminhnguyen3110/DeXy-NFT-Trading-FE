@@ -2,25 +2,20 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Avatar, Button, Grid, Menu, MenuItem, Stack, Typography, styled } from '@mui/material'
-import AccountEdit from '../layouts/account/AccountEdit'
+import AccountEdit from '../../layouts/account/AccountEdit'
 import {
   InputBaseStyled,
   ExpandMoreIconStyled,
   ListGridStyle,
   filterOptionsList,
-} from './marketplace'
+} from '../marketplace'
 import SearchBar from '@/components/SearchBar'
+import userList from '@/dummy-data/user-list'
 import dummyData from '@/dummy-data/item-list'
 import ActionAreaCard from '@/components/Card'
 import PaginationButtons from '@/components/Pagination'
 import DynamicTable from '@/components/DynamicTable'
 import transactionDummyData, { transactionDummyDataColumns } from '@/dummy-data/transaction'
-
-const userDetail = {
-  name: 'John Doe',
-  address: '0x8f3...70da',
-  email: 'JohnDoe@gmail.com',
-}
 
 const EditButton = styled(Button)(({ theme }) => ({
   width: '9.25rem',
@@ -40,16 +35,30 @@ export default function Account() {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
   const router = useRouter()
+  const { address } = router.query
+  const [userInfo, setUserInfo] = useState({})
+  const editable = address == userList[0].address
+
+  useEffect(() => {
+    if (userInfo) {
+      const data = dummyData.filter((item) => item.OwnedByUserAddress === userInfo.address)
+      setTransactionData(transactionDummyData)
+      setItemList(data)
+    } else {
+      router.push('/error')
+    }
+  }, [router, userInfo])
+
+  useEffect(() => {
+    if (address) {
+      const user = userList.filter((item) => item.address == address)[0]
+      setUserInfo(user)
+    }
+  }, [address])
 
   const handleCloseEdit = () => {
     setOpenEdit(false)
   }
-
-  useEffect(() => {
-    const data = dummyData.filter((item) => item.OwnedBy === userDetail.name)
-    setTransactionData(transactionDummyData)
-    setItemList(data)
-  }, [])
 
   const handleFilterOptions = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -78,15 +87,17 @@ export default function Account() {
               sx={{ width: '7.5rem', height: '7.5rem' }}
             />
             <Stack gap={1}>
-              <Typography variant="h5">{userDetail.name}</Typography>
+              <Typography variant="h5">{userInfo.name}</Typography>
               <Typography variant="subtitle1" fontWeight="600">
-                {userDetail.address}
+                {userInfo.address}
               </Typography>
-              <Typography variant="body1">{userDetail.email}</Typography>
+              <Typography variant="body1">{userInfo.email}</Typography>
             </Stack>
-            <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
-              Edit
-            </EditButton>
+            {editable && (
+              <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
+                Edit
+              </EditButton>
+            )}
           </Stack>
         </Grid>
 

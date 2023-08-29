@@ -16,7 +16,7 @@ export const InputBaseStyled = styled(InputBase)(() => ({
 export const ExpandMoreIconStyled = styled(ExpandMoreIcon)(() => ({
   alignSelf: 'center',
   transition: 'transform 0.3s',
-  ':hover': {
+  '&:hover': {
     cursor: 'pointer',
     transform: 'scale(1.2)',
   },

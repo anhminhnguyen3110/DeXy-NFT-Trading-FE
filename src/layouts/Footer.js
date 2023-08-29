@@ -54,13 +54,12 @@ function Footer() {
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            {' '}
             {/* 20% width on medium and up screens */}
             <Typography variant="h6" gutterBottom>
               The team
             </Typography>
             {members.map((member, index) => (
-              <Stack direction={'row'} alignItems={'center'} mt={2} key={`member_avatar_${index}`}>
+              <Stack direction={'row'} alignItems={'center'} mt={2} key={`member-avatar-${index}`}>
                 {/* TODO: Pass avatar */}
                 <Avatar sx={{ marginRight: 2 }} />
                 <Stack gap={0.2}>

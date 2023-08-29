@@ -102,7 +102,7 @@ const pages = [
 ]
 const accountMenu = [
   ['Create wallet', 'https://metamask.io/'],
-  ['Account', '/account'],
+  ['Account', '/account/0x8f3...70da'],
 ]
 
 function ResponsiveAppBar() {
