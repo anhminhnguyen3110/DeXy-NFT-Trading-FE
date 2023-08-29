@@ -46,18 +46,21 @@ export default function Account() {
       const data = dummyData.filter((item) => item.OwnedByUserAddress === userInfo.address)
       setTransactionData(transactionDummyData)
       setItemList(data)
-    } else {
-      router.push('/error')
     }
-  }, [router, userInfo])
+  }, [userInfo])
 
   // get user info from address
   useEffect(() => {
     if (address) {
       const user = userList.filter((item) => item.address == address)[0]
+      console.log(user)
+      if (!user) {
+        router.push('/404')
+        return
+      }
       setUserInfo(user)
     }
-  }, [address])
+  }, [address, router])
 
   const handleCloseEdit = () => {
     setOpenEdit(false)
@@ -70,41 +73,45 @@ export default function Account() {
       </Head>
       <Grid container rowSpacing={4} columnSpacing={3} marginTop={2.5} marginBottom={5}>
         <Grid item xs={12} lg={3}>
-          <Stack gap={2}>
-            <Avatar
-              src="/avatar.jpeg"
-              variant="circular"
-              sx={{ width: '7.5rem', height: '7.5rem' }}
-            />
-            <Stack gap={1}>
-              <Typography variant="h5">{userInfo.name}</Typography>
-              <Typography variant="subtitle1" fontWeight="600">
-                {userInfo.address}
-              </Typography>
-              <Typography variant="body1">{userInfo.email}</Typography>
+          {userInfo && (
+            <Stack gap={2}>
+              <Avatar
+                src="/avatar.jpeg"
+                variant="circular"
+                sx={{ width: '7.5rem', height: '7.5rem' }}
+              />
+              <Stack gap={1}>
+                <Typography variant="h5">{userInfo.name}</Typography>
+                <Typography variant="subtitle1" fontWeight="600">
+                  {userInfo.address}
+                </Typography>
+                <Typography variant="body1">{userInfo.email}</Typography>
+              </Stack>
+              {editable && (
+                <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
+                  Edit
+                </EditButton>
+              )}
             </Stack>
-            {editable && (
-              <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
-                Edit
-              </EditButton>
-            )}
-          </Stack>
+          )}
         </Grid>
 
         <Grid item xs={12} lg={9}>
           <Stack direction="column" gap={2.5}>
             <Typography variant="h2">DeXy Items: </Typography>
-            <ItemList>
-              {itemList.map((item) => (
-                <ActionAreaCard
-                  key={`account-item-${item.id}`}
-                  image={item.image}
-                  title={item.title}
-                  price={item.FixPrice}
-                  onClick={() => router.push(`/item/${item.id}`)}
-                />
-              ))}
-            </ItemList>
+            {itemList.length !== 0 && (
+              <ItemList>
+                {itemList.map((item) => (
+                  <ActionAreaCard
+                    key={`account-item-${item.id}`}
+                    image={item.image}
+                    title={item.title}
+                    price={item.FixPrice}
+                    onClick={() => router.push(`/item/${item.id}`)}
+                  />
+                ))}
+              </ItemList>
+            )}
           </Stack>
         </Grid>
 
