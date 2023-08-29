@@ -1,21 +1,15 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { Avatar, Button, Grid, Menu, MenuItem, Stack, Typography, styled } from '@mui/material'
+import { Avatar, Button, Grid, Stack, Typography, styled } from '@mui/material'
 import AccountEdit from '../../layouts/account/AccountEdit'
-import {
-  InputBaseStyled,
-  ExpandMoreIconStyled,
-  ListGridStyle,
-  filterOptionsList,
-} from '../marketplace'
-import SearchBar from '@/components/SearchBar'
 import userList from '@/dummy-data/user-list'
 import dummyData from '@/dummy-data/item-list'
 import ActionAreaCard from '@/components/Card'
 import PaginationButtons from '@/components/Pagination'
 import DynamicTable from '@/components/DynamicTable'
 import transactionDummyData, { transactionDummyDataColumns } from '@/dummy-data/transaction'
+import ItemList from '@/layouts/marketplace/ItemList'
 
 const EditButton = styled(Button)(({ theme }) => ({
   width: '9.25rem',
@@ -32,8 +26,6 @@ export default function Account() {
   const [openEdit, setOpenEdit] = useState(false)
   const [transactionData, setTransactionData] = useState([])
   const [itemList, setItemList] = useState([])
-  const [anchorElNav, setAnchorElNav] = useState(null)
-  const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
   const router = useRouter()
   const { address } = router.query
   const [userInfo, setUserInfo] = useState({})
@@ -58,19 +50,6 @@ export default function Account() {
 
   const handleCloseEdit = () => {
     setOpenEdit(false)
-  }
-
-  const handleFilterOptions = (event) => {
-    setAnchorElNav(event.currentTarget)
-  }
-
-  const handleCloseFilterOptions = () => {
-    setAnchorElNav(null)
-  }
-
-  const hanldeFilterOptionChoose = (option) => {
-    setFilterOption(option)
-    setAnchorElNav(null)
   }
 
   return (
@@ -104,46 +83,7 @@ export default function Account() {
         <Grid item xs={12} lg={9}>
           <Stack direction="column" gap={2.5}>
             <Typography variant="h2">DeXy Items: </Typography>
-            <Stack
-              gap={{ xs: 1, sm: 3 }}
-              rowGap={1}
-              flexWrap="wrap"
-              direction={{ xs: 'column', sm: 'row' }}
-              alignItems={{ sm: 'center' }}
-              justifyContent="flex-start"
-            >
-              <SearchBar />
-              <Stack direction="row" gap={1.5} alignItems="center">
-                <Typography variant="body1">Price range</Typography>
-                <InputBaseStyled type="number" />
-                <InputBaseStyled type="number" />
-              </Stack>
-              <Stack direction="row" gap={0.5} alignItems="center">
-                <Typography variant="body1">{filterOption}</Typography>
-                <ExpandMoreIconStyled fontSize="large" onClick={handleFilterOptions} />
-                <Menu
-                  anchorEl={anchorElNav}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorElNav)}
-                  onClose={handleCloseFilterOptions}
-                >
-                  {filterOptionsList.map((option) => (
-                    <MenuItem key={option} onClick={() => hanldeFilterOptionChoose(option)}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Stack>
-            </Stack>
-            <ListGridStyle>
+            <ItemList>
               {itemList.map((item) => (
                 <ActionAreaCard
                   key={`account-item-${item.id}`}
@@ -153,8 +93,7 @@ export default function Account() {
                   onClick={() => router.push(`/item/${item.id}`)}
                 />
               ))}
-            </ListGridStyle>
-            <PaginationButtonsStyled />
+            </ItemList>
           </Stack>
         </Grid>
 
