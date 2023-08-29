@@ -8,10 +8,10 @@ import { useRouter } from 'next/router'
 import { Grid, Stack, Typography, Button, styled } from '@mui/material'
 
 const Container = styled(Grid)(({ theme }) => ({
-  paddingTop: '5rem',
+  marginBlock: '1.5rem',
   alignItems: 'center',
   [theme.breakpoints.down('lg')]: {
-    paddingTop: '2rem',
+    marginBlock: '0rem 1.5rem',
   },
 }))
 
@@ -61,7 +61,7 @@ export default function Home() {
         <Grid item xs={12} md={5} lg={3.75}>
           <Stack gap={3}>
             <LogoText>DeXy</LogoText>
-            <Stack gap={1.5}>
+            <Stack gap={{ xs: 1, md: 1.5 }}>
               <Typography
                 variant="h1"
                 sx={{ fontSize: { xs: '1.8rem', sm: '2.3rem', md: '2.75rem' } }}
