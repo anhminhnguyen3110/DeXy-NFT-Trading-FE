@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { Avatar, Box, Button, Grid, Menu, MenuItem, Stack, Typography } from '@mui/material'
+import { Avatar, Button, Grid, Menu, MenuItem, Stack, Typography, styled } from '@mui/material'
 import AccountEdit from '../layouts/account/AccountEdit'
-import styled from '@emotion/styled'
 import {
   InputBaseStyled,
   ExpandMoreIconStyled,
-  FilterTextStyled,
   ListGridStyle,
   filterOptionsList,
 } from './marketplace'
@@ -24,63 +22,28 @@ const userDetail = {
   email: 'JohnDoe@gmail.com',
 }
 
-const TypographyUsernameStyled = styled(Typography)(({ theme }) => ({
-  fontWeight: 'bold',
-  fontSize: '1.3rem',
-  paddingTop: '0.69rem',
-}))
-
-const TypographyUserAddressStyled = styled(Typography)(({ theme }) => ({
-  fontWeight: 'bold',
-  color: theme.palette.primary.main,
-}))
-
 const EditButton = styled(Button)(({ theme }) => ({
   width: '9.25rem',
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('sm')]: {
     width: '100%',
   },
 }))
 
-const StackSearchFilterStyled = styled(Stack)(({ theme }) => ({
-  justifySelf: 'flex-end',
-}))
-
-const EditButtonStyled = styled(EditButton)(({ theme }) => ({
-  marginTop: '1.rem',
-  [theme.breakpoints.down('lg')]: {
-    marginBottom: '3.13rem',
-    width: '100%',
-  },
-}))
-
-const DeXyTypography = styled(Typography)(({ theme }) => ({
-  [theme.breakpoints.down('lg')]: {
-    paddingBottom: '1.25rem',
-  },
-}))
-
-const PaginationGrid = styled(Grid)(({ theme }) => ({
-  paddingBottom: '1.69rem',
-  [theme.breakpoints.down('lg')]: {
-    paddingBottom: '3.12rem',
-  },
-}))
-
-const TransactionHistoryTypography = styled(Typography)(({ theme }) => ({
-  paddingBottom: '1.94rem',
+const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
+  alignSelf: 'center',
 }))
 
 export default function Account() {
   const [openEdit, setOpenEdit] = useState(false)
   const [transactionData, setTransactionData] = useState([])
+  const [itemList, setItemList] = useState([])
+  const [anchorElNav, setAnchorElNav] = useState(null)
+  const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
   const router = useRouter()
 
   const handleCloseEdit = () => {
     setOpenEdit(false)
   }
-
-  const [itemList, setItemList] = useState([])
 
   useEffect(() => {
     const data = dummyData.filter((item) => item.OwnedBy === userDetail.name)
@@ -88,9 +51,6 @@ export default function Account() {
     setItemList(data)
   }, [])
 
-  const [anchorElNav, setAnchorElNav] = useState(null)
-
-  const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
   const handleFilterOptions = (event) => {
     setAnchorElNav(event.currentTarget)
   }
@@ -109,117 +69,98 @@ export default function Account() {
       <Head>
         <title>DeXy | Account</title>
       </Head>
-      <div>
-        <Grid
-          container
-          columnGap={3}
-          style={{
-            paddingTop: '4.12rem',
-          }}
-          direction="row"
-          alignItems="flex-start"
-          justifyContent="flex-start"
-        >
-          <Grid item xs={12} sm={12} md={12} lg={3}>
-            <Stack direction="column" rowGap={1}>
-              <Avatar
-                src="/avatar.jpeg"
-                variant="circular"
-                sx={{ width: '7.5rem', height: '7.5rem' }}
-              />
-              <TypographyUsernameStyled variant="body1">{userDetail.name}</TypographyUsernameStyled>
-              <TypographyUserAddressStyled variant="body1">
+      <Grid container rowSpacing={4} columnSpacing={3} marginTop={2.5} marginBottom={5}>
+        <Grid item xs={12} lg={3}>
+          <Stack gap={2}>
+            <Avatar
+              src="/avatar.jpeg"
+              variant="circular"
+              sx={{ width: '7.5rem', height: '7.5rem' }}
+            />
+            <Stack gap={1}>
+              <Typography variant="h5">{userDetail.name}</Typography>
+              <Typography variant="subtitle1" fontWeight="600">
                 {userDetail.address}
-              </TypographyUserAddressStyled>
+              </Typography>
               <Typography variant="body1">{userDetail.email}</Typography>
-              <EditButtonStyled variant="contained" onClick={() => setOpenEdit(true)}>
-                Edit
-              </EditButtonStyled>
             </Stack>
-          </Grid>
-          <Grid item xs={12} sm={12} md={12} lg={8}>
-            <Stack direction="column" md={12} lg={9}>
-              <DeXyTypography variant="h2">DeXy Items: </DeXyTypography>
-              <StackSearchFilterStyled spacing={1} direction={{ md: 'column', lg: 'row' }}>
-                <SearchBar isTopMenuSearch={false} />
-                <Box sx={{ display: 'flex', flexDirection: 'row', spacing: 1 }}>
-                  <FilterTextStyled variant="body1">Price range</FilterTextStyled>
-                  <InputBaseStyled type="number" />
-                  <InputBaseStyled type="number" />
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <FilterTextStyled variant="body1">{filterOption}</FilterTextStyled>
-                  <ExpandMoreIconStyled fontSize="large" onClick={handleFilterOptions} />
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    open={Boolean(anchorElNav)}
-                    onClose={handleCloseFilterOptions}
-                  >
-                    {filterOptionsList.map((option) => (
-                      <MenuItem key={option} onClick={() => hanldeFilterOptionChoose(option)}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </Box>
-              </StackSearchFilterStyled>
-              <ListGridStyle
-                style={{
-                  paddingTop: '1.54rem',
-                  paddingBottom: '1rem',
-                }}
-                item
-                container
-                columnGap={3.56}
-              >
-                {itemList.map((item, id) => (
-                  <ActionAreaCard
-                    key={id}
-                    image={item.image}
-                    title={item.title}
-                    price={item.FixPrice}
-                    onClick={() => router.push(`/item/${item.id}`)}
-                  />
-                ))}
-              </ListGridStyle>
-              <PaginationGrid item container justifyContent="center">
-                <PaginationButtons />
-              </PaginationGrid>
-            </Stack>
-          </Grid>
+            <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
+              Edit
+            </EditButton>
+          </Stack>
         </Grid>
 
-        <TransactionHistoryTypography variant="h2">
-          Transaction History
-        </TransactionHistoryTypography>
-        {transactionData.length > 0 && (
-          <>
-            <DynamicTable data={transactionData} columns={transactionDummyDataColumns} />
-            <Grid
-              style={{
-                paddingTop: '1rem',
-                paddingBottom: '1rem',
-              }}
-              item
-              container
-              justifyContent="center"
+        <Grid item xs={12} lg={9}>
+          <Stack direction="column" gap={2.5}>
+            <Typography variant="h2">DeXy Items: </Typography>
+            <Stack
+              gap={{ xs: 1, sm: 3 }}
+              rowGap={1}
+              flexWrap="wrap"
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ sm: 'center' }}
+              justifyContent="flex-start"
             >
-              <PaginationButtons />
-            </Grid>
-          </>
-        )}
-        <AccountEdit open={openEdit} handleClose={handleCloseEdit} handleSubmit={handleCloseEdit} />
-      </div>
+              <SearchBar />
+              <Stack direction="row" gap={1.5} alignItems="center">
+                <Typography variant="body1">Price range</Typography>
+                <InputBaseStyled type="number" />
+                <InputBaseStyled type="number" />
+              </Stack>
+              <Stack direction="row" gap={0.5} alignItems="center">
+                <Typography variant="body1">{filterOption}</Typography>
+                <ExpandMoreIconStyled fontSize="large" onClick={handleFilterOptions} />
+                <Menu
+                  anchorEl={anchorElNav}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElNav)}
+                  onClose={handleCloseFilterOptions}
+                >
+                  {filterOptionsList.map((option) => (
+                    <MenuItem key={option} onClick={() => hanldeFilterOptionChoose(option)}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Stack>
+            </Stack>
+            <ListGridStyle>
+              {itemList.map((item) => (
+                <ActionAreaCard
+                  key={`account-item-${item.id}`}
+                  image={item.image}
+                  title={item.title}
+                  price={item.FixPrice}
+                  onClick={() => router.push(`/item/${item.id}`)}
+                />
+              ))}
+            </ListGridStyle>
+            <PaginationButtonsStyled />
+          </Stack>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Stack gap={3.75}>
+            <Typography variant="h2">Transaction History</Typography>
+            {transactionData.length > 0 && (
+              <>
+                <DynamicTable data={transactionData} columns={transactionDummyDataColumns} />
+                <PaginationButtonsStyled />
+              </>
+            )}
+          </Stack>
+        </Grid>
+      </Grid>
+
+      <AccountEdit open={openEdit} handleClose={handleCloseEdit} handleSubmit={handleCloseEdit} />
     </>
   )
 }

@@ -179,6 +179,7 @@ function ResponsiveAppBar() {
           <NavMenuContainer sx={{ display: { xs: 'flex', sm: 'none' } }}>
             <SearchBar
               uniqueId="app-search-bar-sm"
+              shrink
               value={searchValue}
               handleChange={handleChangeSearch}
               searchResult={renderSearchResult()}
@@ -246,6 +247,7 @@ function ResponsiveAppBar() {
             >
               <SearchBar
                 uniqueId="app-search-bar"
+                shrink
                 value={searchValue}
                 handleChange={handleChangeSearch}
                 searchResult={renderSearchResult()}

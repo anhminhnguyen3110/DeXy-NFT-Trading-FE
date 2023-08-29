@@ -1,23 +1,13 @@
-import Head from 'next/head'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Box, Grid, Menu, MenuItem, Stack, Typography } from '@mui/material'
-import styled from '@emotion/styled'
+import Head from 'next/head'
+import { Menu, MenuItem, Stack, Typography, styled } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SearchBar from '@/components/SearchBar'
 import InputBase from '@/components/InputBase'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { useState, useEffect } from 'react'
-import dummyData from '@/dummy-data/item-list'
 import PaginationButtons from '@/components/Pagination'
 import ActionAreaCard from '@/components/Card'
-
-const MarketPlaceStyled = styled(Typography)(({ theme }) => ({
-  paddingTop: '2.31rem',
-  paddingBottom: '2.06rem',
-  [theme.breakpoints.down('sm')]: {
-    paddingTop: '1.06rem',
-    paddingBottom: '1.38rem',
-  },
-}))
+import dummyData from '@/dummy-data/item-list'
 
 export const InputBaseStyled = styled(InputBase)(() => ({
   maxWidth: '4rem',
@@ -32,14 +22,6 @@ export const ExpandMoreIconStyled = styled(ExpandMoreIcon)(() => ({
   },
 }))
 
-export const FilterTextStyled = styled(Typography)(({ theme }) => ({
-  paddingBlock: '0.65rem',
-  fontSize: '1rem',
-  [theme.breakpoints.down('md')]: {
-    paddingBlock: '1rem',
-  },
-}))
-
 export const filterOptionsList = [
   'Recently listed',
   'Price (Lowest to highest)',
@@ -48,45 +30,32 @@ export const filterOptionsList = [
   'Oldest',
 ]
 
-const PaginationBoxStyled = styled(Box)(({ theme }) => ({
-  paddingTop: '1.56rem',
-  paddingBottom: '3.44rem',
-  [theme.breakpoints.down('sm')]: {
-    paddingBottom: '1.94rem',
-    paddingBottom: '5.54rem',
-  },
-}))
-
-export const ListGridStyle = styled(Grid)(({ theme }) => ({
-  paddingTop: '2.15rem',
+export const ListGridStyle = styled('div')(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(205px, 1fr))',
   columnGap: '2.5rem',
   rowGap: '2rem',
-  [theme.breakpoints.down('lg')]: {
-    gridTemplateColumns: 'repeat(2, minmax(10.4375rem, 1fr))',
+  [theme.breakpoints.down('md')]: {
+    gridTemplateColumns: 'repeat(auto-fill, minmax(10rem, 1fr))',
     columnGap: '1rem',
     rowGap: '1rem',
-    paddingTop: '0.86rem',
-  },
-  [theme.breakpoints.down('sm')]: {
-    gridTemplateColumns: 'repeat(1, minmax(10.4375rem, 1fr))',
-    columnGap: '1rem',
-    rowGap: '1rem',
-    paddingTop: '0.86rem',
   },
 }))
 
-export default function MarketPlace() {
+const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
+  alignSelf: 'center',
+}))
+
+export default function Marketplace() {
   const [itemList, setItemList] = useState([])
+  const [anchorElNav, setAnchorElNav] = useState(null)
+  const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
   const router = useRouter()
 
   useEffect(() => {
     setItemList(dummyData)
   }, [])
 
-  const [anchorElNav, setAnchorElNav] = useState(null)
-  const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
   const handleFilterOptions = (event) => {
     setAnchorElNav(event.currentTarget)
   }
@@ -103,29 +72,29 @@ export default function MarketPlace() {
   return (
     <>
       <Head>
-        <title>DeXy | Homepage</title>
+        <title>DeXy | Marketplace</title>
       </Head>
-      <div>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <MarketPlaceStyled variant="h2">Marketplace</MarketPlaceStyled>
-        </Box>
+      <Stack paddingY={4} gap={{ xs: 2.5, md: 4 }}>
+        <Typography variant="h2">Marketplace</Typography>
+
         <Stack
-          columnGap={3}
-          direction={{ md: 'column', lg: 'row' }}
-          alignItems={{ lg: 'center' }}
+          gap={{ xs: 1, sm: 3 }}
+          rowGap={1}
+          flexWrap="wrap"
+          direction={{ xs: 'column', sm: 'row' }}
+          alignItems={{ sm: 'center' }}
           justifyContent="flex-start"
         >
-          <SearchBar isTopMenuSearch={false} />
-          <Box sx={{ display: 'flex', flexDirection: 'row', spacing: 1 }}>
-            <FilterTextStyled variant="body1">Price range</FilterTextStyled>
+          <SearchBar />
+          <Stack direction="row" gap={1.5} alignItems="center">
+            <Typography variant="body1">Price range</Typography>
             <InputBaseStyled type="number" />
             <InputBaseStyled type="number" />
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            <FilterTextStyled variant="body1">{filterOption}</FilterTextStyled>
+          </Stack>
+          <Stack direction="row" gap={0.5} alignItems="center">
+            <Typography variant="body1">{filterOption}</Typography>
             <ExpandMoreIconStyled fontSize="large" onClick={handleFilterOptions} />
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: 'bottom',
@@ -145,10 +114,10 @@ export default function MarketPlace() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
+          </Stack>
         </Stack>
 
-        <ListGridStyle container columnGap={6} rowGap={4}>
+        <ListGridStyle>
           {itemList.map((item) => (
             <ActionAreaCard
               userAddress={item.OwnedByUserAddress}
@@ -161,16 +130,8 @@ export default function MarketPlace() {
           ))}
         </ListGridStyle>
 
-        <PaginationBoxStyled
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
-          <PaginationButtons />
-        </PaginationBoxStyled>
-      </div>
+        <PaginationButtonsStyled />
+      </Stack>
     </>
   )
 }

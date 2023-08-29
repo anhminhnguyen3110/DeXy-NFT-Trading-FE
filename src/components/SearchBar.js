@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { InputBase, Popover, alpha, styled } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
-const Search = styled('div')(({ theme }) => ({
+const Search = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'shrink',
+})(({ theme, shrink }) => ({
   maxHeight: '2.5rem',
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -11,19 +13,27 @@ const Search = styled('div')(({ theme }) => ({
   },
   transition: theme.transitions.create('width'),
   width: '2.5rem',
-  [theme.breakpoints.down('sm')]: {
-    '&:has(.MuiInputBase-input:focus)': {
-      width: '100%',
-      border: `1px solid ${theme.palette.grey[400]}`,
-    },
-  },
-  [theme.breakpoints.up('sm')]: {
+  ...(!shrink && {
     border: `1px solid ${theme.palette.grey[400]}`,
     width: 'auto',
-  },
+  }),
+  ...(shrink && {
+    [theme.breakpoints.up('sm')]: {
+      border: `1px solid ${theme.palette.grey[400]}`,
+      width: 'auto',
+    },
+    [theme.breakpoints.down('sm')]: {
+      '&:has(.MuiInputBase-input:focus)': {
+        width: '100%',
+        border: `1px solid ${theme.palette.grey[400]}`,
+      },
+    },
+  }),
 }))
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'shrink',
+})(({ theme, shrink }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
@@ -31,12 +41,16 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  [theme.breakpoints.down('sm')]: {
-    padding: '0.5rem',
-  },
+  ...(shrink && {
+    [theme.breakpoints.down('sm')]: {
+      padding: '0.5rem',
+    },
+  }),
 }))
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+const StyledInputBase = styled(InputBase, {
+  shouldForwardProp: (prop) => prop !== 'shrink',
+})(({ theme, shrink }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     backgroundColor: 'transparent',
@@ -44,25 +58,21 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoints.down('sm')]: {
-      opacity: 0,
-      width: 0,
-      '&:focus': {
-        opacity: 1,
-        width: '100%',
+    ...(shrink && {
+      [theme.breakpoints.down('sm')]: {
+        opacity: 0,
+        width: 0,
+        '&:focus': {
+          opacity: 1,
+          width: '100%',
+        },
       },
-    },
+    }),
   },
   width: '100%',
 }))
 
-export default function SearchBar({
-  uniqueId,
-  value,
-  handleChange,
-  searchResult,
-  isTopMenuSearch = true,
-}) {
+export default function SearchBar({ uniqueId, value, handleChange, searchResult, shrink }) {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleClose = () => {
@@ -71,11 +81,12 @@ export default function SearchBar({
 
   return (
     <>
-      <Search {...(uniqueId && { id: uniqueId })}>
-        <SearchIconWrapper>
+      <Search shrink={shrink} {...(uniqueId && { id: uniqueId })}>
+        <SearchIconWrapper shrink={shrink}>
           <SearchIcon />
         </SearchIconWrapper>
         <StyledInputBase
+          shrink={shrink}
           autoFocus
           placeholder="Search…"
           inputProps={{ 'aria-label': 'search' }}
