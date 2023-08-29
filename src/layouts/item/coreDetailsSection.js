@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai
+ * Created date: 23/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import useResponsive from '@/hooks/useResponsive'
 import { Stack, Typography, Button, Avatar, styled } from '@mui/material'
 import DynamicTable from '@/components/DynamicTable'

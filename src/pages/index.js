@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen, Duy Khoa Pham
+ * Created date: 02/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Grid, Stack, Typography, Button, styled } from '@mui/material'

@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Duy Khoa Pham
+ * Created date: 28/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { InputBase, styled } from '@mui/material'
 
 const InputBaseStyled = styled(InputBase)(({ theme }) => ({

@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen, Duy Khoa Pham
+ * Created date: 25/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { Button, SvgIcon, styled } from '@mui/material'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 

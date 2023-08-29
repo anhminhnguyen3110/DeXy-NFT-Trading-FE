@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen, Duy Khoa Pham
+ * Created date: 20/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { Checkbox, styled } from '@mui/material'
 
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({

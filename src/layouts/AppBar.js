@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 02/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import useResponsive from '@/hooks/useResponsive'

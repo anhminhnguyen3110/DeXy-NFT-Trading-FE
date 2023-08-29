@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Duy Khoa Pham
+ * Created date: 16/08/2023
+ * Last modified Date: 26/08/2023
+ */
 import { useCallback } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'

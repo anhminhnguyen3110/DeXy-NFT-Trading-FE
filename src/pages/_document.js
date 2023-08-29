@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 02/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { Html, Head, Main, NextScript } from 'next/document'
 
 export default function Document() {

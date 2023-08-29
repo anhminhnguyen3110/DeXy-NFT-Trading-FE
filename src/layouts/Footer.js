@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Duy Khoa Pham
+ * Created date: 18/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { Container, Box, Typography, Link, Grid, styled, Avatar, Stack } from '@mui/material'
 
 const FooterStyle = styled('footer')(({ theme }) => ({

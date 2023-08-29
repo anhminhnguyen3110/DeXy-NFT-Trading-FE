@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Duy Khoa Pham
+ * Created date: 16/08/2023
+ * Last modified Date: 29/08/2023
+ */
 // @mui
 import { styled } from '@mui/material/styles'
 import { Box, Container } from '@mui/material'

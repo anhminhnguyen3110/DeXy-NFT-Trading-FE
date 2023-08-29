@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai
+ * Created date: 19/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { useState } from 'react'
 import useResponsive from '@/hooks/useResponsive'
 import { Dialog, Avatar, IconButton, Button, styled } from '@mui/material'

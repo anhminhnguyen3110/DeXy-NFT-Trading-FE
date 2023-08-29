@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 18/08/2023
+ * Last modified Date: 29/08/2023
+ */
 export default function EthereumIcon({ size = 13 }) {
   return (
     <div style={{ width: size, height: (20 * size) / 11 }}>

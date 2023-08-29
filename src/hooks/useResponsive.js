@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai
+ * Created date: 16/08/2023
+ * Last modified Date: 29/08/2023
+ */
 // @mui
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
