@@ -57,14 +57,18 @@ export default function Home() {
       <Head>
         <title>DeXy | Homepage</title>
       </Head>
-      <Container container rowSpacing={6}>
+      <Container
+        container
+        rowSpacing={6}
+        sx={{ paddingLeft: { md: '5.94rem' }, paddingBottom: { md: '2rem' } }}
+      >
         <Grid item xs={12} md={5} lg={3.75}>
           <Stack gap={3}>
             <LogoText>DeXy</LogoText>
             <Stack gap={{ xs: 1, md: 1.5 }}>
               <Typography
                 variant="h1"
-                sx={{ fontSize: { xs: '1.8rem', sm: '2.3rem', md: '2.75rem' } }}
+                sx={{ fontSize: { xs: '2.375rem', sm: '2.3rem', md: 'h1.fontSize' } }}
               >
                 Trading Platform
               </Typography>
