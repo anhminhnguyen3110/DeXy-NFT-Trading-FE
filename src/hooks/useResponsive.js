@@ -1,14 +1,22 @@
+/**
+ * Author: Kien Quoc Mai
+ * Created date: 16/08/2023
+ * Last modified Date: 29/08/2023
+ */
 // @mui
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ----------------------------------------------------------------------
 
-// type Query = 'up' | 'down' | 'between' | 'only';
-// type Key = Breakpoint | number;
-// type Start = Breakpoint | number;
-// type End = Breakpoint | number;
-
+/**
+ *
+ * @param {'up' | 'down' | 'between' | 'only} query type of query
+ * @param {Breakpoint | number} key breakpoint name or value
+ * @param {Breakpoint | number} start lower bound of range
+ * @param {Breakpoint | number} end upper bound of range
+ * @returns {boolean} screen size matches the breakpoint or range given the query
+ */
 export default function useResponsive(query, key, start, end) {
   const theme = useTheme()
 

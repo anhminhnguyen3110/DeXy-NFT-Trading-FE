@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai
+ * Created date: 19/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { useState } from 'react'
 import useResponsive from '@/hooks/useResponsive'
 import { Dialog, Avatar, IconButton, Button, styled } from '@mui/material'
@@ -45,10 +50,14 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
   color: theme.palette.grey[300],
 }))
 
+/**
+ *
+ * @param {boolean} open open state
+ * @param {function} handleClose function to handle close
+ * @param {function} handleSubmit function to handle submit account edit
+ * @returns {JSX.Element}
+ */
 export default function AccountEdit({ open, handleClose, handleSubmit }) {
-  // allow user to edit avatar, username, email
-  // save changes to user profile
-  // close dialog
   const [avatar, setAvatar] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')

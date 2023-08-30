@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Duy Khoa Pham
+ * Created date: 25/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { useState } from 'react'
 import useResponsive from '@/hooks/useResponsive'
 import { Dialog, IconButton, Select, MenuItem, Typography, styled, alpha } from '@mui/material'
@@ -58,6 +63,12 @@ const SelectStyled = styled(Select)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {boolean} open open state
+ * @param {function} handleClose function to handle close
+ * @returns
+ */
 export default function WalletConnect({ open, handleClose }) {
   const fullScreen = useResponsive('down', 'sm')
   const [wallet, setWallet] = useState('metamask')

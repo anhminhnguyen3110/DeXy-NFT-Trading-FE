@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Duy Khoa Pham
+ * Created date: 18/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { Container, Box, Typography, Link, Grid, styled, Avatar, Stack } from '@mui/material'
 
 const FooterStyle = styled('footer')(({ theme }) => ({
@@ -29,6 +34,10 @@ const members = [
   },
 ]
 
+/**
+ * Sitewide footer
+ * @returns {JSX.Element}
+ */
 function Footer() {
   return (
     <FooterStyle>
@@ -54,13 +63,12 @@ function Footer() {
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
-            {' '}
             {/* 20% width on medium and up screens */}
             <Typography variant="h6" gutterBottom>
               The team
             </Typography>
             {members.map((member, index) => (
-              <Stack direction={'row'} alignItems={'center'} mt={2} key={`member_avatar_${index}`}>
+              <Stack direction={'row'} alignItems={'center'} mt={2} key={`member-avatar-${index}`}>
                 {/* TODO: Pass avatar */}
                 <Avatar sx={{ marginRight: 2 }} />
                 <Stack gap={0.2}>

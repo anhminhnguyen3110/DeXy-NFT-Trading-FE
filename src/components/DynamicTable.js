@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 18/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import {
   Box,
   Stack,
@@ -52,6 +57,16 @@ const TableHeadColumnStyled = styled(TableHead)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.primary.main}`,
 }))
 
+/**
+ *
+ * @param {Array<Record<string, any>>} data row data
+ * @param {Array<{
+ *  id: string,
+ *  label: string,
+ *  align: 'left' | 'right' | 'center' | 'justify' | 'inherit' | undefined
+ * }>} columns column data
+ * @returns {JSX.Element}
+ */
 const DynamicTableDesktop = ({ data, columns }) => {
   return (
     <Box sx={{ display: { xs: 'none', sm: columns.length <= 3 ? 'flex' : 'none', md: 'flex' } }}>

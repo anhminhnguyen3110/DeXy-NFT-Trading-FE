@@ -1,13 +1,21 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 18/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { useState } from 'react'
-import { Pagination, Stack, styled } from '@mui/material'
+import { Pagination, Stack, styled, alpha } from '@mui/material'
 
 const StyledPagination = styled(Pagination)(({ theme }) => ({
   '& .MuiPaginationItem-root': {
     '&.Mui-selected': {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette.primary.light,
+      '&:hover': {
+        backgroundColor: alpha(theme.palette.primary.light, 0.6),
+      },
     },
     '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: theme.palette.primary.light,
     },
   },
   [theme.breakpoints.down('sm')]: {
@@ -20,6 +28,13 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
   },
 }))
 
+/**
+ *
+ * @param {int} spacing spacing between buttons
+ * @param {int} pageCount number of pages
+ * @param {object} props other props
+ * @returns {JSX.Element}
+ */
 export default function PaginationButtons({ spacing = 10, pageCount = 4, ...props }) {
   const [page, setPage] = useState(1)
 

@@ -1,3 +1,8 @@
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 02/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import useResponsive from '@/hooks/useResponsive'
@@ -97,14 +102,18 @@ const SearchResultContainer = styled(Paper)(({ theme }) => ({
 }))
 
 const pages = [
-  ['Marketplace', '/'],
-  ['Create', '/create-dexy-item'],
+  ['Marketplace', '/marketplace'],
+  ['Create', '/create'],
 ]
 const accountMenu = [
   ['Create wallet', 'https://metamask.io/'],
-  ['Account', '/account'],
+  ['Account', '/account/0x8f3...70da'],
 ]
 
+/**
+ * Sitewide app bar
+ * @returns {JSX.Element}
+ */
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const router = useRouter()
@@ -142,9 +151,9 @@ function ResponsiveAppBar() {
 
   const renderSearchResult = () => {
     const searchResult = [
-      ['Space doge 1', 'abcxyz', '/space-doge'],
-      ['Space doge 2', 'abcxyz', '/space-doge'],
-      ['Space doge 3', 'abcxyz', '/space-doge'],
+      ['Space doge 1', 'abcxyz', '/item/1'],
+      ['Space doge 2', 'abcxyz', '/item/2'],
+      ['Space doge 3', 'abcxyz', '/item/3'],
     ]
     return (
       <SearchResultContainer>
@@ -176,9 +185,12 @@ function ResponsiveAppBar() {
               <Typography fontSize="1.25rem">Etherium</Typography>
             </Stack>
           )}
+
+          {/* Mobile navigation menu */}
           <NavMenuContainer sx={{ display: { xs: 'flex', sm: 'none' } }}>
             <SearchBar
               uniqueId="app-search-bar-sm"
+              shrink
               value={searchValue}
               handleChange={handleChangeSearch}
               searchResult={renderSearchResult()}
@@ -236,6 +248,8 @@ function ResponsiveAppBar() {
               <MenuItem onClick={() => {}}>Log out</MenuItem>
             </Menu>
           </NavMenuContainer>
+
+          {/* Desktop navigation menu */}
           <NavMenuContainer sx={{ display: { xs: 'none', sm: 'flex' } }}>
             <div
               style={{
@@ -246,6 +260,7 @@ function ResponsiveAppBar() {
             >
               <SearchBar
                 uniqueId="app-search-bar"
+                shrink
                 value={searchValue}
                 handleChange={handleChangeSearch}
                 searchResult={renderSearchResult()}

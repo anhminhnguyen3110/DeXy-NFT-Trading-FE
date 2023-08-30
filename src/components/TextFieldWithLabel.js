@@ -1,4 +1,10 @@
-import { FormControl, InputBase, InputLabel, styled } from '@mui/material'
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen
+ * Created date: 19/08/2023
+ * Last modified Date: 29/08/2023
+ */
+import { FormControl, InputLabel, styled } from '@mui/material'
+import InputBase from '@/components/InputBase'
 
 const InputLabelStyled = styled(InputLabel)(({ theme }) => ({
   fontWeight: 'bold',
@@ -9,41 +15,19 @@ const InputLabelStyled = styled(InputLabel)(({ theme }) => ({
   },
 }))
 
-const InputBaseStyled = styled(InputBase)(({ theme }) => ({
-  'label + &': {
-    marginTop: theme.spacing(3.5),
-  },
-  '& .MuiInputBase-input': {
-    color: theme.palette.text.primary,
-    borderRadius: 10,
-    position: 'relative',
-    border: '1px solid',
-    borderColor: theme.palette.grey[400],
-    width: 'auto',
-    flexGrow: 1,
-    padding: `${theme.spacing(0.8)} ${theme.spacing(1)}`,
-    transition: theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
-    '&:focus': {
-      borderColor: theme.palette.primary.main,
-      borderWidth: 2,
-    },
-  },
-}))
-
+/**
+ *
+ * @param {string} label label of text field
+ * @param {string} value value of text field
+ * @param {function} onChange function to handle change
+ * @param {object} props other props
+ * @returns {JSX.Element}
+ */
 export default function TextFieldWithLabel({ label, value, onChange, ...props }) {
   return (
     <FormControl fullWidth variant="standard">
       <InputLabelStyled shrink>{label}</InputLabelStyled>
-      <InputBaseStyled value={value} onChange={onChange} {...props} />
+      <InputBase value={value} onChange={onChange} {...props} />
     </FormControl>
   )
 }
-
-export const InputBaseStyledMarketplace = styled(InputBaseStyled)(({ theme }) => ({
-  maxWidth: '3.5625rem',
-  paddingLeft: theme.spacing(1),
-}))
-
-export const InputBaseStyledCreateItem = styled(InputBaseStyled)(({ theme }) => ({
-  paddingTop: theme.spacing(1),
-}))

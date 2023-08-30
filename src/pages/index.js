@@ -1,36 +1,46 @@
-import { useState } from 'react'
+/**
+ * Author: Kien Quoc Mai, Anh Minh Nguyen, Duy Khoa Pham
+ * Created date: 02/08/2023
+ * Last modified Date: 29/08/2023
+ */
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Grid, Stack, Typography, Button, styled } from '@mui/material'
 
 const Container = styled(Grid)(({ theme }) => ({
-  paddingTop: '5.06rem',
+  marginBlock: '1.5rem',
   alignItems: 'center',
   [theme.breakpoints.down('lg')]: {
-    paddingTop: '1.25rem',
+    marginBlock: '0rem 1.5rem',
   },
 }))
 
-const ClickingButton = styled(Button)(({ theme }) => ({
-  width: '11.375rem',
-  height: '3.625rem',
+const LogoText = styled(Typography)(({ theme }) => ({
+  fontFamily: 'Teko, sans-serif',
+  color: theme.palette.primary.main,
+  fontSize: '4.5rem',
+  fontWeight: 700,
+  lineHeight: '4rem',
+}))
+
+const ButtonStyled = styled(Button)(() => ({
+  flexGrow: 1,
+  height: '3rem',
 }))
 
 const StyledImage = styled('img')(({ theme }) => ({
   width: '25.5rem',
   height: '42.5rem',
   [theme.breakpoints.down('lg')]: {
-    paddingTop: '3.13rem',
-    paddingBottom: '3.12rem',
     width: '19.3125rem',
     height: '32.1875rem',
   },
 }))
 
-const h1Style = {
-  fontSize: { xs: '38px', md: 'h1.fontSize' },
-}
-
+/**
+ * Home page
+ * @returns {JSX.Element}
+ */
 export default function Home() {
   const router = useRouter()
 
@@ -39,7 +49,7 @@ export default function Home() {
   }
 
   const handleClickCreate = () => {
-    router.push(`/create-dexy-item`)
+    router.push(`/create`)
   }
 
   return (
@@ -47,31 +57,34 @@ export default function Home() {
       <Head>
         <title>DeXy | Homepage</title>
       </Head>
-      <Container container>
-        <Grid item xs={12} md={6} lg={4}>
-          <Stack rowGap={2.5} mb={7}>
-            <Typography variant="h1" sx={h1Style} color={'primary'}>
-              Dexy Items
-            </Typography>
-            <Typography variant="h1" sx={h1Style}>
-              Trading Platform
-            </Typography>
-            <Typography variant="h3">Create & trade Dexy Items</Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            columnGap={3.38}
-            sx={{ justifyContent: { xs: 'center', md: 'flex-start' } }}
-          >
-            <ClickingButton variant="contained" onClick={handleClickDiscover}>
-              Discover
-            </ClickingButton>
-            <ClickingButton variant="outlined" onClick={handleClickCreate}>
-              Create
-            </ClickingButton>
+      <Container container rowSpacing={6}>
+        <Grid item xs={12} md={5} lg={3.75}>
+          <Stack gap={3}>
+            <LogoText>DeXy</LogoText>
+            <Stack gap={{ xs: 1, md: 1.5 }}>
+              <Typography
+                variant="h1"
+                sx={{ fontSize: { xs: '1.8rem', sm: '2.3rem', md: '2.75rem' } }}
+              >
+                Trading Platform
+              </Typography>
+              <Typography variant="h3">Create & trade Dexy Items</Typography>
+            </Stack>
+            <Stack
+              direction="row"
+              gap={2.5}
+              sx={{ justifyContent: { xs: 'center', md: 'flex-start' } }}
+            >
+              <ButtonStyled variant="contained" onClick={handleClickDiscover}>
+                Discover
+              </ButtonStyled>
+              <ButtonStyled variant="outlined" onClick={handleClickCreate}>
+                Create
+              </ButtonStyled>
+            </Stack>
           </Stack>
         </Grid>
-        <Grid item xs={12} md={6} lg={7} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+        <Grid item xs={12} md={6} lg={7.5} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
           <StyledImage src="/background.png" alt="Description of the background" />
         </Grid>
       </Container>
