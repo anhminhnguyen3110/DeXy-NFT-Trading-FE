@@ -149,6 +149,22 @@ function ResponsiveAppBar() {
     setOpenShoppingCart(true)
   }
 
+  const [walletAddress, setWalletAddress] = useState()
+  async function connectToMetamask() {
+    try {
+      // Request Metamask to connect
+      if (!window.ethereum) {
+        alert('install metamask extension!!')
+        return
+      }
+
+      const res = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      setWalletAddress(res[0])
+    } catch (error) {
+      console.error('An error occurred while connecting to Metamask:', error)
+    }
+  }
+
   const renderSearchResult = () => {
     const searchResult = [
       ['Space doge 1', 'abcxyz', '/item/1'],
@@ -239,6 +255,7 @@ function ResponsiveAppBar() {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
+              <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
               <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
               {accountMenu.map(([page, location]) => (
                 <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
@@ -311,6 +328,7 @@ function ResponsiveAppBar() {
                 display: { xs: 'none', sm: 'block' },
               }}
             >
+              <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
               <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
               {accountMenu.map(([page, location]) => (
                 <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>

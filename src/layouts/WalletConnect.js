@@ -71,7 +71,7 @@ const SelectStyled = styled(Select)(({ theme }) => ({
  */
 export default function WalletConnect({ open, handleClose }) {
   const fullScreen = useResponsive('down', 'sm')
-  const [wallet, setWallet] = useState('metamask')
+  const [wallet, setWallet] = useState('walletconnect')
 
   return (
     <DialogStyled open={open} onClose={handleClose} fullScreen={fullScreen} fullWidth maxWidth="xs">
@@ -79,9 +79,7 @@ export default function WalletConnect({ open, handleClose }) {
         <CloseRoundedIcon />
       </CloseButton>
       <SelectStyled value={wallet} onChange={(e) => setWallet(e.target.value)}>
-        <MenuItem value="metamask">Metamask</MenuItem>
         <MenuItem value="walletconnect">WalletConnect</MenuItem>
-        <MenuItem value="walletlink">WalletLink</MenuItem>
       </SelectStyled>
       <Description>Scan QR code with a WalletConnect-compatible wallet</Description>
       <ImageContainer>
