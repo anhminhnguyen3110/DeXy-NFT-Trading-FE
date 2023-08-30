@@ -30,6 +30,7 @@ const Search = styled('div', {
       width: 'auto',
     },
     [theme.breakpoints.down('sm')]: {
+      border: 'none',
       '&:has(.MuiInputBase-input:focus)': {
         width: '100%',
       },

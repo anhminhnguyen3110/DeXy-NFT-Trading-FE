@@ -9,8 +9,8 @@ import Image from 'next/image'
 import Head from 'next/head'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import { Stack, Typography, styled, useTheme } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
+import { Stack, Typography, Grid, styled, useTheme } from '@mui/material'
+import GridV2 from '@mui/material/Unstable_Grid2'
 import ActionAreaCard from '@/components/Card'
 import CoreDetailsSection from '@/layouts/item/CoreDetailsSection'
 
@@ -94,18 +94,25 @@ export default function ItemDetail() {
       <Head>
         <title>DeXy | Item details</title>
       </Head>
-      <Grid container spacing={6} marginY={3}>
-        <Grid container xs={12} spacing={4} direction={{ xs: 'column-reverse', md: 'row' }}>
-          <Grid xs={12} md={7}>
-            <CoreDetailsSection />
-          </Grid>
-          <Grid xs={12} md={5}>
-            <ImageContainer>
-              <Image src="/bean.png" alt={`image-${id}`} fill priority />
-            </ImageContainer>
-          </Grid>
+      <Grid container spacing={6} marginBottom={4} marginTop={1}>
+        <Grid container item xs={12}>
+          <GridV2
+            container
+            spacing={5}
+            direction={{ xs: 'column-reverse', md: 'row' }}
+            sx={{ flexGrow: 1, width: '100%' }}
+          >
+            <GridV2 xs={12} md={7}>
+              <CoreDetailsSection />
+            </GridV2>
+            <GridV2 xs={12} md={5}>
+              <ImageContainer>
+                <Image src="/bean.png" alt={`image-${id}`} fill priority />
+              </ImageContainer>
+            </GridV2>
+          </GridV2>
         </Grid>
-        <Grid xs={12} md={7}>
+        <Grid item xs={12} md={7}>
           <Typography variant="h3" gutterBottom>
             Description
           </Typography>
@@ -117,7 +124,7 @@ export default function ItemDetail() {
             consequuntur.
           </Typography>
         </Grid>
-        <Grid xs={12} md={5}>
+        <Grid item xs={12} md={5}>
           <Typography variant="h3" gutterBottom>
             Asset detail
           </Typography>
@@ -128,7 +135,7 @@ export default function ItemDetail() {
             <Typography variant="body1">Fix price: 0.09</Typography>
           </Stack>
         </Grid>
-        <Grid xs={12}>
+        <Grid item xs={12}>
           <Typography variant="h3" gutterBottom>
             More from this user
           </Typography>
