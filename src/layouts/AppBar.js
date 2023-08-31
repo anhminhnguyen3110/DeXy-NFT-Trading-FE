@@ -105,11 +105,9 @@ const pages = [
   ['Marketplace', '/marketplace'],
   ['Create', '/create'],
 ]
-const accountMenu = [
-  ['Create wallet', 'https://metamask.io/'],
-  ['Account', '/account/0x8f3...70da'],
-]
+const accountMenuNotLogin = [['Create wallet', 'https://metamask.io/']]
 
+const accountMenuLogin = [['Account', '/account/0x8f3...70da']]
 /**
  * Sitewide app bar
  * @returns {JSX.Element}
@@ -121,6 +119,7 @@ function ResponsiveAppBar() {
   const [searchValue, setSearchValue] = useState('')
   const [openWalletConnect, setOpenWalletConnect] = useState(false)
   const [openShoppingCart, setOpenShoppingCart] = useState(false)
+  const [userAddress, setUserAddress] = useState('')
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -149,20 +148,17 @@ function ResponsiveAppBar() {
     setOpenShoppingCart(true)
   }
 
-  const [walletAddress, setWalletAddress] = useState()
-  async function connectToMetamask() {
-    try {
-      // Request Metamask to connect
-      if (!window.ethereum) {
-        alert('install metamask extension!!')
-        return
-      }
+  const handleLogout = () => {
+    localStorage.removeItem('userAddress')
+    setUserAddress('')
+  }
 
-      const res = await window.ethereum.request({ method: 'eth_requestAccounts' })
-      setWalletAddress(res[0])
-    } catch (error) {
-      console.error('An error occurred while connecting to Metamask:', error)
-    }
+  async function connectToMetamask() {
+    const address = '0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d'
+
+    localStorage.setItem('userAddress', address)
+
+    setUserAddress(address)
   }
 
   const renderSearchResult = () => {
@@ -211,16 +207,18 @@ function ResponsiveAppBar() {
               handleChange={handleChangeSearch}
               searchResult={renderSearchResult()}
             />
-            <IconButton
-              className="hide-on-search-focus"
-              size="large"
-              aria-label="shopping cart"
-              aria-controls="shopping-cart"
-              aria-haspopup="true"
-              onClick={handleOpenShoppingCart}
-            >
-              <ShoppingCartRoundedIcon />
-            </IconButton>
+            {userAddress === '' ? null : (
+              <IconButton
+                className="hide-on-search-focus"
+                size="large"
+                aria-label="shopping cart"
+                aria-controls="shopping-cart"
+                aria-haspopup="true"
+                onClick={handleOpenShoppingCart}
+              >
+                <ShoppingCartRoundedIcon />
+              </IconButton>
+            )}
             <IconButton
               className="hide-on-search-focus"
               size="large"
@@ -257,12 +255,12 @@ function ResponsiveAppBar() {
               ))}
               <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
               <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
-              {accountMenu.map(([page, location]) => (
+              {accountMenuNotLogin.map(([page, location]) => (
                 <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
                   {page}
                 </MenuItem>
               ))}
-              <MenuItem onClick={() => {}}>Log out</MenuItem>
+              <MenuItem onClick={handleLogout}>Log out</MenuItem>
             </Menu>
           </NavMenuContainer>
 
@@ -292,15 +290,18 @@ function ResponsiveAppBar() {
                 {page}
               </NavButton>
             ))}
-            <IconButton
-              size="large"
-              aria-label="shopping cart"
-              aria-controls="shopping-cart"
-              aria-haspopup="true"
-              onClick={handleOpenShoppingCart}
-            >
-              <ShoppingCartRoundedIcon />
-            </IconButton>
+            {userAddress === '' ? null : (
+              <IconButton
+                className="hide-on-search-focus"
+                size="large"
+                aria-label="shopping cart"
+                aria-controls="shopping-cart"
+                aria-haspopup="true"
+                onClick={handleOpenShoppingCart}
+              >
+                <ShoppingCartRoundedIcon />
+              </IconButton>
+            )}
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -310,33 +311,60 @@ function ResponsiveAppBar() {
             >
               <AccountBalanceWalletRoundedIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-              }}
-            >
-              <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
-              <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
-              {accountMenu.map(([page, location]) => (
-                <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
-                  {page}
-                </MenuItem>
-              ))}
-              <MenuItem onClick={() => {}}>Log out</MenuItem>
-            </Menu>
+            {userAddress === '' ? (
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { xs: 'none', sm: 'block' },
+                }}
+              >
+                <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
+                <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
+                {accountMenuNotLogin.map(([page, location]) => (
+                  <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
+                    {page}
+                  </MenuItem>
+                ))}
+              </Menu>
+            ) : (
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { xs: 'none', sm: 'block' },
+                }}
+              >
+                {accountMenuLogin.map(([page, location]) => (
+                  <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
+                    {page}
+                  </MenuItem>
+                ))}
+                <MenuItem onClick={handleLogout}>Log out</MenuItem> {/* Moved inside the Menu */}
+              </Menu>
+            )}
           </NavMenuContainer>
         </ToolbarStyled>
       </Container>

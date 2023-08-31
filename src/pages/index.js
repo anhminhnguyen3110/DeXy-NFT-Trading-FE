@@ -7,6 +7,10 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Grid, Stack, Typography, Button, styled } from '@mui/material'
 
+/**
+ * Styled for Grid container, adapt to the screen size and design
+ */
+
 const Container = styled(Grid)(({ theme }) => ({
   marginBlock: '1.5rem',
   alignItems: 'center',
