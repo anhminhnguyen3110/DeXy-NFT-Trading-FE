@@ -53,7 +53,6 @@ export default function Account() {
   useEffect(() => {
     if (address) {
       const user = userList.filter((item) => item.address == address)[0]
-      console.log(user)
       if (!user) {
         router.push('/404')
         return
