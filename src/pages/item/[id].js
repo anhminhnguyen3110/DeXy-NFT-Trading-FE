@@ -14,6 +14,7 @@ import GridV2 from '@mui/material/Unstable_Grid2'
 import ActionAreaCard from '@/components/Card'
 import CoreDetailsSection from '@/layouts/item/CoreDetailsSection'
 
+// calculate the carousel responsive configuration based on the theme breakpoints
 const CarouselStyled = styled(Carousel)(({ theme }) => ({
   paddingBlock: theme.spacing(1),
   '& .react-multiple-carousel__arrow': {
@@ -89,6 +90,7 @@ export default function ItemDetail() {
     [theme]
   )
 
+  // Render the ItemDetail component
   return (
     <>
       <Head>

@@ -15,6 +15,7 @@ import ItemList from '@/layouts/marketplace/ItemList'
  * Marketplace page
  * @returns {JSX.Element}
  */
+// Define component states and hooks
 export default function Marketplace() {
   const [itemList, setItemList] = useState([])
   const router = useRouter()
