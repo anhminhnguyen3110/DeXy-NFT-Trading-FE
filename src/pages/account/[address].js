@@ -61,10 +61,11 @@ export default function Account() {
     }
   }, [address, router])
 
+  // close edit dialog
   const handleCloseEdit = () => {
     setOpenEdit(false)
   }
-
+  // render the account page
   return (
     <>
       <Head>

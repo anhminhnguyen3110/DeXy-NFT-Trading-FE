@@ -13,6 +13,7 @@ import Layout from '../layouts'
 import ThemeProvider from '../theme'
 import '@/styles/globals.css'
 
+// Styled component for the content of the success and error snackbars
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) => ({
   '&.notistack-MuiContent-success': {
     backgroundColor: theme.palette.primary.light,

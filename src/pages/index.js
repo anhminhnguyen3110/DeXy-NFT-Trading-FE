@@ -47,11 +47,11 @@ const StyledImage = styled('img')(({ theme }) => ({
  */
 export default function Home() {
   const router = useRouter()
-
+  // handler for the Discover button click event
   const handleClickDiscover = () => {
     router.push(`/marketplace`)
   }
-
+  // handler for the Create button click event
   const handleClickCreate = () => {
     router.push(`/create`)
   }
