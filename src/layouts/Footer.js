@@ -53,12 +53,11 @@ function Footer() {
             <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: '45rem' }}>
               <DeXyHeadingStyle>DeXy</DeXyHeadingStyle>
               <Typography variant="body1">
-                DeXy is the sexiest decentralized trading platform for the crypto lovers. It lets
-                you swap, trade, and invest in any crypto asset with style and fun. Whether you are
-                a newbie or a veteran, DeXy gives you the features and tips you need to rock the
-                crypto market. DeXy is more than just a platform, it’s a party of awesome traders
-                who share their wisdom, tactics, and enthusiasm. Join DeXy today and experience the
-                thrill of crypto trading.
+                DeXy is a decentralized trading platform for the Web3 enthusiast. It lets you trade
+                in any crypto asset with transparency. Whether you are a newbie or a Web3 guru, DeXy
+                gives you the familiar look and feel of a traditional trading platform. DeXy is more
+                than just a platform, it’s a party of awesome traders who share their enthusiasm.
+                Join DeXy today and experience the thrill of decentralized trading.
               </Typography>
             </Box>
           </Grid>
