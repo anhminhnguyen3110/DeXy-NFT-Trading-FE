@@ -1,12 +1,14 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 02/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 12/09/2023
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import useResponsive from '@/hooks/useResponsive'
 import Link from 'next/link'
+import { useWeb3Modal } from '@web3modal/react'
+import { useAccount, useDisconnect } from 'wagmi'
 import {
   Container,
   AppBar,
@@ -27,7 +29,6 @@ import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceW
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import EthereumIcon from '@/components/EthereumIcon'
 import SearchBar from '@/components/SearchBar'
-import WalletConnect from './WalletConnect'
 import ShoppingCart from './ShoppingCart'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -107,7 +108,7 @@ const pages = [
 ]
 const accountMenuNotLogin = [['Create wallet', 'https://metamask.io/']]
 
-const accountMenuLogin = [['Account', '/account/0x8f3...70da']]
+const accountMenuLogin = [['Account', '/account/']]
 /**
  * Sitewide app bar
  * @returns {JSX.Element}
@@ -117,9 +118,16 @@ function ResponsiveAppBar() {
   const router = useRouter()
   const isDesktop = useResponsive('up', 'md')
   const [searchValue, setSearchValue] = useState('')
-  const [openWalletConnect, setOpenWalletConnect] = useState(false)
   const [openShoppingCart, setOpenShoppingCart] = useState(false)
-  const [userAddress, setUserAddress] = useState('')
+  const { open: openWalletConnect, close: closeWalletConnect } = useWeb3Modal()
+  const { address: userAddress, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
+
+  useEffect(() => {
+    if (isConnected) {
+      closeWalletConnect()
+    }
+  }, [closeWalletConnect, isConnected, userAddress])
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget)
@@ -131,7 +139,8 @@ function ResponsiveAppBar() {
 
   const handleClickMenu = (location) => {
     handleCloseNavMenu()
-    router.push(`${location.toLowerCase()}`)
+    if (location.endsWith('account/')) location = location + userAddress
+    router.push(`${location}`)
   }
 
   const handleChangeSearch = (event) => {
@@ -140,7 +149,7 @@ function ResponsiveAppBar() {
 
   const handleOpenWalletConnect = () => {
     handleCloseNavMenu()
-    setOpenWalletConnect(true)
+    openWalletConnect()
   }
 
   const handleOpenShoppingCart = () => {
@@ -149,16 +158,13 @@ function ResponsiveAppBar() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('userAddress')
-    setUserAddress('')
+    disconnect()
   }
 
   async function connectToMetamask() {
-    const address = '0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d'
-
-    localStorage.setItem('userAddress', address)
-
-    setUserAddress(address)
+    // const address = '0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d'
+    // localStorage.setItem('userAddress', address)
+    // setUserAddress(address)
   }
 
   const renderSearchResult = () => {
@@ -194,7 +200,7 @@ function ResponsiveAppBar() {
           {isDesktop && (
             <Stack direction="row" gap={1} alignItems="center">
               <EthereumIcon />
-              <Typography fontSize="1.25rem">Etherium</Typography>
+              <Typography fontSize="1.25rem">Ethereum</Typography>
             </Stack>
           )}
 
@@ -207,7 +213,7 @@ function ResponsiveAppBar() {
               handleChange={handleChangeSearch}
               searchResult={renderSearchResult()}
             />
-            {userAddress === '' ? null : (
+            {!isConnected ? null : (
               <IconButton
                 className="hide-on-search-focus"
                 size="large"
@@ -290,7 +296,7 @@ function ResponsiveAppBar() {
                 {page}
               </NavButton>
             ))}
-            {userAddress === '' ? null : (
+            {!isConnected ? null : (
               <IconButton
                 className="hide-on-search-focus"
                 size="large"
@@ -311,7 +317,7 @@ function ResponsiveAppBar() {
             >
               <AccountBalanceWalletRoundedIcon />
             </IconButton>
-            {userAddress === '' ? (
+            {!isConnected ? (
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorElNav}
@@ -368,7 +374,6 @@ function ResponsiveAppBar() {
           </NavMenuContainer>
         </ToolbarStyled>
       </Container>
-      <WalletConnect open={openWalletConnect} handleClose={() => setOpenWalletConnect(false)} />
       <ShoppingCart open={openShoppingCart} handleClose={() => setOpenShoppingCart(false)} />
     </AppBarStyled>
   )

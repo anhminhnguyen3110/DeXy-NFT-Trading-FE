@@ -1,13 +1,17 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 24/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 12/09/2023
  */
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
+import copy from 'copy-to-clipboard'
+import { useSnackbar } from 'notistack'
 import { Avatar, Button, Grid, Stack, Typography, styled } from '@mui/material'
-import AccountEdit from '../../layouts/account/AccountEdit'
+import NonSSRWrapper from '@/utils/nonSsrWrapper'
+import AccountEdit from '@/layouts/account/AccountEdit'
 import userList from '@/dummy-data/user-list'
 import dummyData from '@/dummy-data/item-list'
 import ActionAreaCard from '@/components/Card'
@@ -38,7 +42,8 @@ export default function Account() {
   const router = useRouter()
   const { address } = router.query
   const [userInfo, setUserInfo] = useState({})
-  const editable = address == userList[0].address
+  const { address: userAddress } = useAccount()
+  const { enqueueSnackbar } = useSnackbar()
 
   // get item list and transaction history of user
   useEffect(() => {
@@ -52,7 +57,7 @@ export default function Account() {
   // get user info from address
   useEffect(() => {
     if (address) {
-      const user = userList.filter((item) => item.address == address)[0]
+      const user = userList.filter((item) => item.address === address)[0]
       if (!user) {
         router.push('/404')
         return
@@ -65,70 +70,85 @@ export default function Account() {
   const handleCloseEdit = () => {
     setOpenEdit(false)
   }
+
+  const handleCopyAdress = () => {
+    copy(userInfo.address)
+    enqueueSnackbar('Address copied to clipboard', { variant: 'success' })
+  }
+
   // render the account page
   return (
     <>
       <Head>
         <title>DeXy | Account</title>
       </Head>
-      <Grid container rowSpacing={4} columnSpacing={3} marginTop={2.5} marginBottom={5}>
-        <Grid item xs={12} lg={3}>
-          {userInfo && (
-            <Stack gap={2}>
-              <Avatar
-                src="/avatar.jpeg"
-                variant="circular"
-                sx={{ width: '7.5rem', height: '7.5rem' }}
-              />
-              <Stack gap={1}>
-                <Typography variant="h5">{userInfo.name}</Typography>
-                <Typography variant="subtitle1" fontWeight="600">
-                  {userInfo.address}
-                </Typography>
-                <Typography variant="body1">{userInfo.email}</Typography>
+      <NonSSRWrapper>
+        <Grid container rowSpacing={4} columnSpacing={3} marginTop={2.5} marginBottom={5}>
+          <Grid item xs={12} lg={3}>
+            {userInfo && (
+              <Stack gap={2}>
+                <Avatar
+                  src="/avatar.jpeg"
+                  variant="circular"
+                  sx={{ width: '7.5rem', height: '7.5rem' }}
+                />
+                <Stack gap={1}>
+                  <Typography variant="h5">{userInfo.name}</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="600"
+                    onClick={handleCopyAdress}
+                    sx={{ cursor: 'pointer' }}
+                  >
+                    {userInfo.address
+                      ? `${userInfo.address.slice(0, 6)}...${userInfo.address.slice(-4)}`
+                      : ''}
+                  </Typography>
+                  <Typography variant="body1">{userInfo.email}</Typography>
+                </Stack>
+                {address === userAddress && (
+                  <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
+                    Edit
+                  </EditButton>
+                )}
               </Stack>
-              {editable && (
-                <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
-                  Edit
-                </EditButton>
+            )}
+          </Grid>
+
+          <Grid item xs={12} lg={9}>
+            <Stack direction="column" gap={2.5}>
+              <Typography variant="h2">DeXy Items: </Typography>
+              {itemList.length !== 0 && (
+                <ItemList>
+                  {itemList.map((item) => (
+                    <ActionAreaCard
+                      key={`account-item-${item.id}`}
+                      image={item.image}
+                      title={item.title}
+                      price={item.FixPrice}
+                      onClick={() => router.push(`/item/${item.id}`)}
+                    />
+                  ))}
+                </ItemList>
               )}
             </Stack>
-          )}
+          </Grid>
+
+          <Grid item xs={12}>
+            <Stack gap={3.75}>
+              <Typography variant="h2">Transaction History</Typography>
+              {transactionData.length > 0 && (
+                <>
+                  <DynamicTable data={transactionData} columns={transactionDummyDataColumns} />
+                  <PaginationButtonsStyled />
+                </>
+              )}
+            </Stack>
+          </Grid>
         </Grid>
 
-        <Grid item xs={12} lg={9}>
-          <Stack direction="column" gap={2.5}>
-            <Typography variant="h2">DeXy Items: </Typography>
-            {itemList.length !== 0 && (
-              <ItemList>
-                {itemList.map((item) => (
-                  <ActionAreaCard
-                    key={`account-item-${item.id}`}
-                    image={item.image}
-                    title={item.title}
-                    price={item.FixPrice}
-                    onClick={() => router.push(`/item/${item.id}`)}
-                  />
-                ))}
-              </ItemList>
-            )}
-          </Stack>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Stack gap={3.75}>
-            <Typography variant="h2">Transaction History</Typography>
-            {transactionData.length > 0 && (
-              <>
-                <DynamicTable data={transactionData} columns={transactionDummyDataColumns} />
-                <PaginationButtonsStyled />
-              </>
-            )}
-          </Stack>
-        </Grid>
-      </Grid>
-
-      <AccountEdit open={openEdit} handleClose={handleCloseEdit} handleSubmit={handleCloseEdit} />
+        <AccountEdit open={openEdit} handleClose={handleCloseEdit} handleSubmit={handleCloseEdit} />
+      </NonSSRWrapper>
     </>
   )
 }

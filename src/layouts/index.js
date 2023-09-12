@@ -1,14 +1,17 @@
 /**
  * Author: Kien Quoc Mai, Duy Khoa Pham
  * Created date: 16/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 12/09/2023
  */
+import dynamic from 'next/dynamic'
 // @mui
 import { styled } from '@mui/material/styles'
 import { Box, Container } from '@mui/material'
 // component
-import ResponsiveAppBar from './AppBar'
 import Footer from './Footer'
+const ResponsiveAppBar = dynamic(() => import('./AppBar'), {
+  ssr: false,
+})
 
 const RootStyle = styled(Box)(() => ({
   display: 'flex',

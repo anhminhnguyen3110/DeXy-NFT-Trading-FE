@@ -7,7 +7,7 @@ const dummyData = [
     CreatedDate: '2023-08-23',
     CreatedBy: 'User1',
     OwnedBy: 'John Doe',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x48Bca13e3e8D4aCB02dF586fCBd7337C2ef95CDe',
   },
   {
     id: 2,
@@ -16,7 +16,7 @@ const dummyData = [
     FixPrice: '0.015',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User2',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x48Bca13e3e8D4aCB02dF586fCBd7337C2ef95CDe',
     OwnedBy: 'User3',
   },
   {
@@ -26,7 +26,7 @@ const dummyData = [
     FixPrice: '0.007',
     CreatedDate: '2023-08-23',
     CreatedBy: 'User1',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x48Bca13e3e8D4aCB02dF586fCBd7337C2ef95CDe',
     OwnedBy: 'User1',
   },
   {
@@ -37,7 +37,7 @@ const dummyData = [
     CreatedDate: '2023-08-23',
     CreatedBy: 'User3',
     OwnedBy: 'John Doe',
-    OwnedByUserAddress: '0x8f3...70da',
+    OwnedByUserAddress: '0x48Bca13e3e8D4aCB02dF586fCBd7337C2ef95CDe',
   },
   {
     id: 5,
