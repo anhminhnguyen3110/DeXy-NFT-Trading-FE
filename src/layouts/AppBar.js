@@ -7,8 +7,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import useResponsive from '@/hooks/useResponsive'
 import Link from 'next/link'
+import { useSnackbar } from 'notistack'
 import { useWeb3Modal } from '@web3modal/react'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect, useSignMessage } from 'wagmi'
 import {
   Container,
   AppBar,
@@ -22,6 +23,8 @@ import {
   Stack,
   Paper,
   Avatar,
+  Backdrop,
+  CircularProgress,
   styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -117,11 +120,31 @@ function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const router = useRouter()
   const isDesktop = useResponsive('up', 'md')
+  const { enqueueSnackbar } = useSnackbar()
   const [searchValue, setSearchValue] = useState('')
   const [openShoppingCart, setOpenShoppingCart] = useState(false)
+  const [loginLoading, setLoginLoading] = useState(false)
   const { open: openWalletConnect, close: closeWalletConnect } = useWeb3Modal()
-  const { address: userAddress, isConnected } = useAccount()
+  const { signMessageAsync } = useSignMessage({
+    message: process.env.NEXT_PUBLIC_LOGIN_MESSAGE,
+  })
   const { disconnect } = useDisconnect()
+  const { address: userAddress, isConnected } = useAccount({
+    async onConnect({ address, isReconnected }) {
+      if (!isReconnected) {
+        try {
+          setLoginLoading(true)
+          const message = await signMessageAsync()
+          console.log(address, message)
+        } catch {
+          enqueueSnackbar('Login failed', { variant: 'error' })
+          disconnect()
+        } finally {
+          setLoginLoading(false)
+        }
+      }
+    },
+  })
 
   useEffect(() => {
     if (isConnected) {
@@ -375,6 +398,9 @@ function ResponsiveAppBar() {
         </ToolbarStyled>
       </Container>
       <ShoppingCart open={openShoppingCart} handleClose={() => setOpenShoppingCart(false)} />
+      <Backdrop sx={{ zIndex: 9999 }} open={loginLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </AppBarStyled>
   )
 }
