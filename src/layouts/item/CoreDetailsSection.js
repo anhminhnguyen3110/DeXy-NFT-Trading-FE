@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai
  * Created date: 23/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 15/09/2023
  */
 import useResponsive from '@/hooks/useResponsive'
 import { Stack, Typography, Button, Avatar, styled } from '@mui/material'
@@ -57,9 +57,12 @@ const rows = [
 /**
  * Core details section for an item including:
  * name, owner, price, history, action buttons
+ *
+ * @param {string} username
+ * @param {string} address
  * @returns {JSX.Element}
  */
-export default function CoreDetailsSection() {
+export default function CoreDetailsSection({ username, address, showActionButtons = true }) {
   const isSm = useResponsive('down', 'sm')
 
   return (
@@ -75,8 +78,8 @@ export default function CoreDetailsSection() {
         <Stack direction="row" alignItems="center" gap={1.5}>
           <Avatar sizes="small" />
           <Stack>
-            <Typography variant="body1">User</Typography>
-            <Typography variant="subtitle1">abcdxyz</Typography>
+            <Typography variant="body1">{username}</Typography>
+            <Typography variant="subtitle1">{address.slice(0, 8)}</Typography>
           </Stack>
         </Stack>
       </Stack>
@@ -96,19 +99,21 @@ export default function CoreDetailsSection() {
               <BoldText>0.45</BoldText>
             </Stack>
           </Stack>
-          <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.75} rowGap={1.25}>
-            <Button fullWidth variant="contained">
-              Take over
-            </Button>
-            <Stack direction="row" gap={1.75} sx={{ display: { xs: 'flex', sm: 'contents' } }}>
-              <Button fullWidth variant="outlined">
-                Make an offer
+          {showActionButtons && (
+            <Stack direction={{ xs: 'column', sm: 'row' }} gap={1.75} rowGap={1.25}>
+              <Button fullWidth variant="contained">
+                Take over
               </Button>
-              <Button variant="contained" sx={{ minWidth: '3.5rem' }}>
-                <AddShoppingCartRoundedIcon sx={{ fontSize: { xs: '1.4rem', sm: '1.6rem' } }} />
-              </Button>
+              <Stack direction="row" gap={1.75} sx={{ display: { xs: 'flex', sm: 'contents' } }}>
+                <Button fullWidth variant="outlined">
+                  Make an offer
+                </Button>
+                <Button variant="contained" sx={{ minWidth: '3.5rem' }}>
+                  <AddShoppingCartRoundedIcon sx={{ fontSize: { xs: '1.4rem', sm: '1.6rem' } }} />
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
+          )}
         </Stack>
       </Stack>
     </Stack>
