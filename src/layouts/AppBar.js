@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 02/08/2023
- * Last modified Date: 12/09/2023
+ * Last modified Date: 15/09/2023
  */
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -9,7 +9,8 @@ import useResponsive from '@/hooks/useResponsive'
 import Link from 'next/link'
 import { useSnackbar } from 'notistack'
 import { useWeb3Modal } from '@web3modal/react'
-import { useAccount, useDisconnect, useSignMessage } from 'wagmi'
+import { useAccount, useDisconnect, useSignMessage, useBalance } from 'wagmi'
+import axios from '@/utils/axios'
 import {
   Container,
   AppBar,
@@ -111,7 +112,7 @@ const pages = [
 ]
 const accountMenuNotLogin = [['Create wallet', 'https://metamask.io/']]
 
-const accountMenuLogin = [['Account', '/account/']]
+const accountMenuLogin = [['My account', '/account/']]
 /**
  * Sitewide app bar
  * @returns {JSX.Element}
@@ -123,6 +124,7 @@ function ResponsiveAppBar() {
   const { enqueueSnackbar } = useSnackbar()
   const [searchValue, setSearchValue] = useState('')
   const [openShoppingCart, setOpenShoppingCart] = useState(false)
+  const [userDetails, setUserDetails] = useState({})
   const [loginLoading, setLoginLoading] = useState(false)
   const { open: openWalletConnect, close: closeWalletConnect } = useWeb3Modal()
   const { signMessageAsync } = useSignMessage({
@@ -131,19 +133,30 @@ function ResponsiveAppBar() {
   const { disconnect } = useDisconnect()
   const { address: userAddress, isConnected } = useAccount({
     async onConnect({ address, isReconnected }) {
-      if (!isReconnected) {
-        try {
-          setLoginLoading(true)
+      try {
+        setLoginLoading(true)
+        if (!isReconnected) {
           const message = await signMessageAsync()
-          console.log(address, message)
-        } catch {
-          enqueueSnackbar('Login failed', { variant: 'error' })
-          disconnect()
-        } finally {
-          setLoginLoading(false)
+          const authResponse = await axios.post('/auth', {
+            user_address: address,
+            sign_message: message,
+          })
+          const token = authResponse.data.token
+          localStorage.setItem('token', token)
         }
+
+        const userdetailResponse = await axios.get(`/${address}`)
+        setUserDetails(userdetailResponse.data)
+      } catch {
+        enqueueSnackbar('Login failed', { variant: 'error' })
+        disconnect()
+      } finally {
+        setLoginLoading(false)
       }
     },
+  })
+  const { data: balance } = useBalance({
+    address: userAddress,
   })
 
   useEffect(() => {
@@ -184,12 +197,6 @@ function ResponsiveAppBar() {
     disconnect()
   }
 
-  async function connectToMetamask() {
-    // const address = '0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d'
-    // localStorage.setItem('userAddress', address)
-    // setUserAddress(address)
-  }
-
   const renderSearchResult = () => {
     const searchResult = [
       ['Space doge 1', 'abcxyz', '/item/1'],
@@ -210,6 +217,46 @@ function ResponsiveAppBar() {
           </MenuItem>
         ))}
       </SearchResultContainer>
+    )
+  }
+
+  const AccountMenuItems = () => {
+    if (!isConnected)
+      return (
+        <>
+          <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
+          {accountMenuNotLogin.map(([page, location]) => (
+            <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
+              {page}
+            </MenuItem>
+          ))}
+        </>
+      )
+    return (
+      <>
+        <MenuItem onClick={() => openWalletConnect({ route: 'Account' })}>
+          <Stack direction="row" gap={1} alignItems="center">
+            <Avatar src={userDetails.image} sx={{ width: 26, height: 26 }} />
+            <Typography fontWeight="bold">{userDetails.user_name}</Typography>
+            <Typography variant="subtitle2" sx={{ marginLeft: '1rem' }}>
+              {userAddress.slice(0, 8)}
+            </Typography>
+          </Stack>
+        </MenuItem>
+        {accountMenuLogin.map(([page, location]) => (
+          <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
+            {page}
+          </MenuItem>
+        ))}
+        <MenuItem onClick={handleLogout}>Log out</MenuItem>
+        <MenuItem>
+          Balance:
+          <Stack direction="row" gap={1} sx={{ marginLeft: 'auto' }} alignItems="center">
+            <EthereumIcon size={10} />
+            {balance?.formatted}
+          </Stack>
+        </MenuItem>
+      </>
     )
   }
 
@@ -282,14 +329,7 @@ function ResponsiveAppBar() {
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
-              <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
-              <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
-              {accountMenuNotLogin.map(([page, location]) => (
-                <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
-                  {page}
-                </MenuItem>
-              ))}
-              <MenuItem onClick={handleLogout}>Log out</MenuItem>
+              <AccountMenuItems />
             </Menu>
           </NavMenuContainer>
 
@@ -340,60 +380,26 @@ function ResponsiveAppBar() {
             >
               <AccountBalanceWalletRoundedIcon />
             </IconButton>
-            {!isConnected ? (
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: 'none', sm: 'block' },
-                }}
-              >
-                <MenuItem onClick={connectToMetamask}>Metamask</MenuItem>
-                <MenuItem onClick={handleOpenWalletConnect}>Connect wallet</MenuItem>
-                {accountMenuNotLogin.map(([page, location]) => (
-                  <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
-                    {page}
-                  </MenuItem>
-                ))}
-              </Menu>
-            ) : (
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: 'none', sm: 'block' },
-                }}
-              >
-                {accountMenuLogin.map(([page, location]) => (
-                  <MenuItem key={`account-menu-${page}`} onClick={() => handleClickMenu(location)}>
-                    {page}
-                  </MenuItem>
-                ))}
-                <MenuItem onClick={handleLogout}>Log out</MenuItem> {/* Moved inside the Menu */}
-              </Menu>
-            )}
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+              }}
+            >
+              <AccountMenuItems />
+            </Menu>
           </NavMenuContainer>
         </ToolbarStyled>
       </Container>
