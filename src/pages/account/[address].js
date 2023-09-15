@@ -19,6 +19,7 @@ import PaginationButtons from '@/components/Pagination'
 import DynamicTable from '@/components/DynamicTable'
 import transactionDummyData, { transactionDummyDataColumns } from '@/dummy-data/transaction'
 import ItemList from '@/layouts/marketplace/ItemList'
+import { walletAddressFormat } from '@/utils/format'
 
 const EditButton = styled(Button)(({ theme }) => ({
   width: '9.25rem',
@@ -100,9 +101,7 @@ export default function Account() {
                     onClick={handleCopyAdress}
                     sx={{ cursor: 'pointer' }}
                   >
-                    {userInfo.address
-                      ? `${userInfo.address.slice(0, 6)}...${userInfo.address.slice(-4)}`
-                      : ''}
+                    {userInfo.address ? walletAddressFormat(userInfo.address) : ''}
                   </Typography>
                   <Typography variant="body1">{userInfo.email}</Typography>
                 </Stack>

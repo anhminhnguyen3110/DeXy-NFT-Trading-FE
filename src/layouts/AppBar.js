@@ -9,6 +9,8 @@ import useResponsive from '@/hooks/useResponsive'
 import Link from 'next/link'
 import { useWeb3Modal } from '@web3modal/react'
 import { useAccount, useDisconnect } from 'wagmi'
+import { useSnackbar } from 'notistack'
+import axios from 'axios'
 import {
   Container,
   AppBar,
@@ -22,6 +24,7 @@ import {
   Stack,
   Paper,
   Avatar,
+  CircularProgress,
   styled,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -30,6 +33,7 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
 import EthereumIcon from '@/components/EthereumIcon'
 import SearchBar from '@/components/SearchBar'
 import ShoppingCart from './ShoppingCart'
+import { walletAddressFormat } from '@/utils/format'
 
 const AppBarStyled = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral,
@@ -102,6 +106,15 @@ const SearchResultContainer = styled(Paper)(({ theme }) => ({
   },
 }))
 
+const SearchResultText = styled(Typography)(({ theme }) => ({
+  ...theme.typography.h4,
+  fontSize: '1rem !important',
+}))
+
+const SearchResultTitle = styled(MenuItem)(() => ({
+  opacity: '1 !important',
+}))
+
 const pages = [
   ['Marketplace', '/marketplace'],
   ['Create', '/create'],
@@ -118,10 +131,13 @@ function ResponsiveAppBar() {
   const router = useRouter()
   const isDesktop = useResponsive('up', 'md')
   const [searchValue, setSearchValue] = useState('')
+  const [searchResult, setSearchResult] = useState({ items: [], users: [] })
+  const [searchLoading, setSearchLoading] = useState(false)
   const [openShoppingCart, setOpenShoppingCart] = useState(false)
   const { open: openWalletConnect, close: closeWalletConnect } = useWeb3Modal()
   const { address: userAddress, isConnected } = useAccount()
   const { disconnect } = useDisconnect()
+  const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     if (isConnected) {
@@ -143,8 +159,27 @@ function ResponsiveAppBar() {
     router.push(`${location}`)
   }
 
-  const handleChangeSearch = (event) => {
+  const handleChangeSearch = async (event) => {
     setSearchValue(event.target.value)
+    if (!event.target.value) {
+      setSearchLoading(false)
+      return setSearchResult({ items: [], users: [] })
+    }
+
+    setSearchLoading(true)
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/search?search_input=${event.target.value}&limit=5&page=0`
+      )
+      setSearchResult({
+        items: response.data.items.data,
+        users: response.data.users.data,
+      })
+    } catch (error) {
+      enqueueSnackbar('Failed to fetch search result', { variant: 'error' })
+    } finally {
+      setSearchLoading(false)
+    }
   }
 
   const handleOpenWalletConnect = () => {
@@ -168,21 +203,41 @@ function ResponsiveAppBar() {
   }
 
   const renderSearchResult = () => {
-    const searchResult = [
-      ['Space doge 1', 'abcxyz', '/item/1'],
-      ['Space doge 2', 'abcxyz', '/item/2'],
-      ['Space doge 3', 'abcxyz', '/item/3'],
-    ]
+    if (searchLoading)
+      return (
+        <SearchResultContainer sx={{ display: 'grid', placeItems: 'center', padding: '1rem' }}>
+          <CircularProgress />
+        </SearchResultContainer>
+      )
+
+    if (!searchResult.items.length && !searchResult.users.length) return null
+
     return (
       <SearchResultContainer>
-        {searchResult.map(([name, owner, location]) => (
-          <MenuItem key={`${name}-${owner}`} onClick={() => handleClickMenu(location)}>
-            <Avatar src="/space-doge-sm.jpeg" variant="rounded" />
+        <SearchResultTitle disabled>
+          <SearchResultText>Items</SearchResultText>
+        </SearchResultTitle>
+        {searchResult.items.map(({ id, item_name, owner_address, image }) => (
+          <MenuItem key={`search-result-item-${id}`} onClick={() => handleClickMenu(`/item/${id}`)}>
+            <Avatar src={image} variant="rounded" />
             <Stack gap={0.2} marginLeft={1}>
-              <Typography variant="h4" style={{ fontSize: '1rem' }}>
-                {name}
-              </Typography>
-              <Typography variant="subtitle2">{owner}</Typography>
+              <SearchResultText>{item_name}</SearchResultText>
+              <Typography variant="subtitle2">{walletAddressFormat(owner_address)}</Typography>
+            </Stack>
+          </MenuItem>
+        ))}
+        <SearchResultTitle disabled>
+          <SearchResultText>Users</SearchResultText>
+        </SearchResultTitle>
+        {searchResult.users.map(({ id, user_name, user_address, image }) => (
+          <MenuItem
+            key={`search-result-user-${id}`}
+            onClick={() => handleClickMenu(`/account/${user_address}`)}
+          >
+            <Avatar src={image} />
+            <Stack gap={0.2} marginLeft={1}>
+              <SearchResultText>{user_name}</SearchResultText>
+              <Typography variant="subtitle2">{walletAddressFormat(user_address)}</Typography>
             </Stack>
           </MenuItem>
         ))}
