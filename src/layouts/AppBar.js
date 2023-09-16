@@ -146,7 +146,7 @@ function ResponsiveAppBar() {
         }
 
         const userdetailResponse = await axios.get(`/${address}`)
-        setUserDetails(userdetailResponse.data)
+        setUserDetails(userdetailResponse.data.data)
       } catch {
         enqueueSnackbar('Login failed', { variant: 'error' })
         disconnect()
