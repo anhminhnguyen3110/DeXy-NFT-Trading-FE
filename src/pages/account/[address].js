@@ -10,7 +10,7 @@ import { useAccount } from 'wagmi'
 import copy from 'copy-to-clipboard'
 import { useSnackbar } from 'notistack'
 import { Avatar, Button, Grid, Stack, Typography, styled } from '@mui/material'
-import NonSSRWrapper from '@/utils/nonSsrWrapper'
+import NonSSRWrapper from '@/utils/NonSsrWrapper'
 import AccountEdit from '@/layouts/account/AccountEdit'
 import userList from '@/dummy-data/user-list'
 import dummyData from '@/dummy-data/item-list'
@@ -19,6 +19,7 @@ import PaginationButtons from '@/components/Pagination'
 import DynamicTable from '@/components/DynamicTable'
 import transactionDummyData, { transactionDummyDataColumns } from '@/dummy-data/transaction'
 import ItemList from '@/layouts/marketplace/ItemList'
+import { walletAddressFormat } from '@/utils/format'
 
 const EditButton = styled(Button)(({ theme }) => ({
   width: '9.25rem',
@@ -100,9 +101,7 @@ export default function Account() {
                     onClick={handleCopyAdress}
                     sx={{ cursor: 'pointer' }}
                   >
-                    {userInfo.address
-                      ? `${userInfo.address.slice(0, 6)}...${userInfo.address.slice(-4)}`
-                      : ''}
+                    {userInfo.address ? walletAddressFormat(userInfo.address) : ''}
                   </Typography>
                   <Typography variant="body1">{userInfo.email}</Typography>
                 </Stack>
