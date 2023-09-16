@@ -10,7 +10,6 @@ import Link from 'next/link'
 import { useSnackbar } from 'notistack'
 import { useWeb3Modal } from '@web3modal/react'
 import { useAccount, useDisconnect, useSignMessage, useBalance } from 'wagmi'
-import { useSnackbar } from 'notistack'
 import axios from 'axios'
 import {
   Container,
@@ -171,7 +170,6 @@ function ResponsiveAppBar() {
   const { data: balance } = useBalance({
     address: userAddress,
   })
-  const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     if (isConnected) {
