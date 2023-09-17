@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 02/08/2023
- * Last modified Date: 15/09/2023
+ * Last modified Date: 17/09/2023
  */
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useSnackbar } from 'notistack'
 import { useWeb3Modal } from '@web3modal/react'
 import { useAccount, useDisconnect, useSignMessage, useBalance } from 'wagmi'
-import axios from 'axios'
+import axios from '@/utils/axios'
 import {
   Container,
   AppBar,

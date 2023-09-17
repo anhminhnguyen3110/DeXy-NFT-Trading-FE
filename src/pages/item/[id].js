@@ -1,11 +1,11 @@
 /**
  * Author: Kien Quoc Mai
  * Created date: 23/08/2023
- * Last modified Date: 15/09/2023
+ * Last modified Date: 17/09/2023
  */
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
+import { useAccount, useBalance } from 'wagmi'
 import Image from 'next/image'
 import Head from 'next/head'
 import Carousel from 'react-multi-carousel'
@@ -14,6 +14,7 @@ import { Stack, Typography, Grid, styled, useTheme } from '@mui/material'
 import GridV2 from '@mui/material/Unstable_Grid2'
 import ActionAreaCard from '@/components/Card'
 import CoreDetailsSection from '@/layouts/item/CoreDetailsSection'
+import PlaceOffer from '@/layouts/item/PlaceOffer'
 import NonSsrWrapper from '@/utils/NonSsrWrapper'
 
 // calculate the carousel responsive configuration based on the theme breakpoints
@@ -69,7 +70,11 @@ export default function ItemDetail() {
   // TODO: replace the ownerUsername and ownerAddress with the real data
   const ownerUsername = 'John Doe'
   const ownerAddress = 'abcxyz'
-  const { address: userAddress } = useAccount()
+  const { address: userAddress, isConnected } = useAccount()
+  const { data: balance } = useBalance({
+    address: userAddress,
+  })
+  const [openPlaceOffer, setOpenPlaceOffer] = useState(false)
 
   const carouselResponsiveConfig = useMemo(
     () =>
@@ -96,6 +101,8 @@ export default function ItemDetail() {
     [theme]
   )
 
+  const handlePlaceOffer = (price) => {}
+
   // Render the ItemDetail component
   return (
     <>
@@ -115,7 +122,8 @@ export default function ItemDetail() {
                 <CoreDetailsSection
                   username={ownerUsername}
                   address={ownerAddress}
-                  showActionButtons={ownerAddress !== userAddress}
+                  showActionButtons={isConnected && ownerAddress !== userAddress}
+                  onPlaceOffer={() => setOpenPlaceOffer(true)}
                 />
               </GridV2>
               <GridV2 xs={12} md={5}>
@@ -169,6 +177,13 @@ export default function ItemDetail() {
             </CarouselStyled>
           </Grid>
         </Grid>
+        <PlaceOffer
+          open={openPlaceOffer}
+          handleClose={() => setOpenPlaceOffer(false)}
+          handleSubmit={handlePlaceOffer}
+          balance={balance?.formatted}
+          itemName={'Bean #14525'}
+        />
       </NonSsrWrapper>
     </>
   )

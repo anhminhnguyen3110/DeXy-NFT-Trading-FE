@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai
  * Created date: 23/08/2023
- * Last modified Date: 15/09/2023
+ * Last modified Date: 17/09/2023
  */
 import useResponsive from '@/hooks/useResponsive'
 import { Stack, Typography, Button, Avatar, styled } from '@mui/material'
@@ -60,9 +60,16 @@ const rows = [
  *
  * @param {string} username
  * @param {string} address
+ * @param {boolean} showActionButtons
+ * @param {function} onPlaceOffer
  * @returns {JSX.Element}
  */
-export default function CoreDetailsSection({ username, address, showActionButtons = true }) {
+export default function CoreDetailsSection({
+  username,
+  address,
+  showActionButtons = true,
+  onPlaceOffer,
+}) {
   const isSm = useResponsive('down', 'sm')
 
   return (
@@ -105,7 +112,7 @@ export default function CoreDetailsSection({ username, address, showActionButton
                 Take over
               </Button>
               <Stack direction="row" gap={1.75} sx={{ display: { xs: 'flex', sm: 'contents' } }}>
-                <Button fullWidth variant="outlined">
+                <Button fullWidth variant="outlined" onClick={onPlaceOffer}>
                   Make an offer
                 </Button>
                 <Button variant="contained" sx={{ minWidth: '3.5rem' }}>
