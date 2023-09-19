@@ -157,7 +157,7 @@ function ResponsiveAppBar() {
           localStorage.setItem('token', token)
         }
 
-        const userdetailResponse = await axios.get(`/${address}`)
+        const userdetailResponse = await axios.get(`/users/${address}`)
         setUserDetails(userdetailResponse.data.data)
       } catch {
         enqueueSnackbar('Login failed', { variant: 'error' })
@@ -201,11 +201,11 @@ function ResponsiveAppBar() {
     setSearchLoading(true)
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/search?search_input=${event.target.value}&limit=5&page=0`
+        `${process.env.NEXT_PUBLIC_API_URL}/search?search_input=${event.target.value}`
       )
       setSearchResult({
-        items: response.data.items.data,
-        users: response.data.users.data,
+        items: response.data.data.items,
+        users: response.data.data.users,
       })
     } catch (error) {
       enqueueSnackbar('Failed to fetch search result', { variant: 'error' })
