@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 18/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 19/09/2023
  */
 import {
   Card,
@@ -13,6 +13,7 @@ import {
   styled,
 } from '@mui/material'
 import EthereumIcon from '@/components/EthereumIcon'
+import { walletAddressFormat } from '@/utils/format'
 
 const CardStyled = styled(Card)(({ theme }) => ({
   '&:hover': {
@@ -40,7 +41,7 @@ export default function ActionAreaCard({ image, title, price, onClick, userAddre
           </Typography>
           {userAddress ? (
             <Typography gutterBottom variant="subtitle1" component="div">
-              {userAddress}
+              {walletAddressFormat(userAddress)}
             </Typography>
           ) : null}
           <Stack direction="row" alignItems="center" gap={0.8}>
