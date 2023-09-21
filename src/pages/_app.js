@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
-import { arbitrum, mainnet, polygon } from 'wagmi/chains'
+import { mainnet, localhost } from 'wagmi/chains'
 import { IconButton, styled, useTheme } from '@mui/material'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import { SnackbarProvider, closeSnackbar, MaterialDesignContent } from 'notistack'
@@ -29,7 +29,7 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) =>
   },
 }))
 
-const chains = [mainnet]
+const chains = [mainnet, localhost]
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
 const wagmiConfig = createConfig({
