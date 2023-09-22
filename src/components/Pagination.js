@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 18/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 19/09/2023
  */
 import { useState } from 'react'
 import { Pagination, Stack, styled, alpha } from '@mui/material'
@@ -35,13 +35,13 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
  * @param {object} props other props
  * @returns {JSX.Element}
  */
-export default function PaginationButtons({ spacing = 10, pageCount = 4, ...props }) {
-  const [page, setPage] = useState(1)
-
-  const handlePageChange = (_event, newPage) => {
-    setPage(newPage)
-  }
-
+export default function PaginationButtons({
+  page = 1,
+  handlePageChange,
+  spacing = 10,
+  pageCount = 4,
+  ...props
+}) {
   return (
     <Stack spacing={spacing} {...props}>
       <StyledPagination

@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 24/08/2023
- * Last modified Date: 12/09/2023
+ * Last modified Date: 19/09/2023
  */
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
@@ -9,7 +9,9 @@ import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 import copy from 'copy-to-clipboard'
 import { useSnackbar } from 'notistack'
-import { Avatar, Button, Grid, Stack, Typography, styled } from '@mui/material'
+import { useItemListFilter, FILTER_OPTIONS } from '@/hooks/useItemListFilter'
+import axios from '@/utils/axios'
+import { Avatar, Button, Grid, Stack, Typography, Skeleton, styled } from '@mui/material'
 import NonSSRWrapper from '@/utils/NonSsrWrapper'
 import AccountEdit from '@/layouts/account/AccountEdit'
 import userList from '@/dummy-data/user-list'
@@ -36,15 +38,31 @@ const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
  * Account detail page
  * @returns {JSX.Element}
  */
-export default function Account() {
+export default function Account({ categories }) {
   const [openEdit, setOpenEdit] = useState(false)
   const [transactionData, setTransactionData] = useState([])
-  const [itemList, setItemList] = useState([])
   const router = useRouter()
   const { address } = router.query
   const [userInfo, setUserInfo] = useState({})
   const { address: userAddress } = useAccount()
   const { enqueueSnackbar } = useSnackbar()
+  const [itemList, setItemList] = useState([])
+  const [totalPages, setTotalPages] = useState(2)
+  const [itemLoading, setItemLoading] = useState(false)
+  const {
+    search,
+    startPrice,
+    endPrice,
+    sortBy,
+    category,
+    page,
+    handleSearchChange,
+    handleStartPriceChange,
+    handleEndPriceChange,
+    handleSortByChange,
+    handleCategoryChange,
+    handlePageChange,
+  } = useItemListFilter(categories)
 
   // get item list and transaction history of user
   useEffect(() => {
@@ -118,16 +136,41 @@ export default function Account() {
             <Stack direction="column" gap={2.5}>
               <Typography variant="h2">DeXy Items: </Typography>
               {itemList.length !== 0 && (
-                <ItemList>
-                  {itemList.map((item) => (
-                    <ActionAreaCard
-                      key={`account-item-${item.id}`}
-                      image={item.image}
-                      title={item.title}
-                      price={item.FixPrice}
-                      onClick={() => router.push(`/item/${item.id}`)}
-                    />
-                  ))}
+                <ItemList
+                  categories={categories}
+                  filterOptions={FILTER_OPTIONS}
+                  search={search}
+                  startPrice={startPrice}
+                  endPrice={endPrice}
+                  sortBy={sortBy}
+                  category={category}
+                  page={page}
+                  totalPages={totalPages}
+                  handleSearchChange={handleSearchChange}
+                  handleStartPriceChange={handleStartPriceChange}
+                  handleEndPriceChange={handleEndPriceChange}
+                  handleSortByChange={handleSortByChange}
+                  handleCategoryChange={handleCategoryChange}
+                  handlePageChange={handlePageChange}
+                >
+                  {itemLoading
+                    ? Array.from({ length: 12 }).map((_, index) => (
+                        <Skeleton
+                          key={`marketplace-item-skeleton-${index}`}
+                          variant="rounded"
+                          width={210}
+                          height={300}
+                        />
+                      ))
+                    : itemList.map((item) => (
+                        <ActionAreaCard
+                          key={`account-item-${item.id}`}
+                          image={item.image}
+                          title={item.title}
+                          price={item.FixPrice}
+                          onClick={() => router.push(`/item/${item.id}`)}
+                        />
+                      ))}
                 </ItemList>
               )}
             </Stack>
@@ -150,4 +193,10 @@ export default function Account() {
       </NonSSRWrapper>
     </>
   )
+}
+
+Account.getInitialProps = async () => {
+  const response = await axios.get('/category')
+  const categories = response.data.data
+  return { categories: categories.map((category) => category.category_name) }
 }

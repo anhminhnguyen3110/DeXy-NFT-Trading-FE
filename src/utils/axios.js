@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai
  * Created date: 15/09/2023
- * Last modified Date: 15/09/2023
+ * Last modified Date: 19/09/2023
  */
 import axios from 'axios'
 
@@ -14,11 +14,14 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    try {
+      const token = localStorage.getItem('token')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    } finally {
+      return config
     }
-    return config
   },
   (error) => Promise.reject(error)
 )

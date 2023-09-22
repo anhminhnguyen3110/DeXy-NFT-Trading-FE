@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 29/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 19/09/2023
  */
 import { useState } from 'react'
 import { Menu, MenuItem, Stack, Typography, styled } from '@mui/material'
@@ -23,14 +23,6 @@ const ExpandMoreIconStyled = styled(ExpandMoreIcon)(() => ({
   },
 }))
 
-const filterOptionsList = [
-  'Recently listed',
-  'Price (Lowest to highest)',
-  'Price (Highest to lowest)',
-  'Newest',
-  'Oldest',
-]
-
 const ListGridStyle = styled('div')(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(205px, 1fr))',
@@ -50,23 +42,68 @@ const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
 /**
  * Display a list of item cards with filter options and pagination
  * @param {JSX.Element} children item cards to display
+ * @param {Array} categories list of categories
+ * @param {Array} filterOptions list of filter options
+ * @param {string} search search input
+ * @param {number} startPrice start price input
+ * @param {number} endPrice end price input
+ * @param {string} sortBy sort by input
+ * @param {number} category category input
+ * @param {number} page page input
+ * @param {number} totalPages total number of pages
+ * @param {function} handleSearchChange handle search input change
+ * @param {function} handleStartPriceChange handle start price input change
+ * @param {function} handleEndPriceChange handle end price input change
+ * @param {function} handleSortByChange handle sort by input change
+ * @param {function} handleCategoryChange handle category input change
+ * @param {function} handlePageChange handle page input change
  * @returns {JSX.Element}
  */
-export default function ItemList({ children }) {
+export default function ItemList({
+  filterOptions,
+  categories,
+  search,
+  startPrice,
+  endPrice,
+  sortBy,
+  category,
+  page,
+  totalPages,
+  handleSearchChange,
+  handleStartPriceChange,
+  handleEndPriceChange,
+  handleSortByChange,
+  handleCategoryChange,
+  handlePageChange,
+  children,
+}) {
   const [anchorElNav, setAnchorElNav] = useState(null)
-  const [filterOption, setFilterOption] = useState(filterOptionsList[0]) // default: 'Recently listed'
+  const [anchorElCategory, setAnchorElCategory] = useState(null)
 
-  const handleFilterOptions = (event) => {
+  const handleOpenSortby = (event) => {
     setAnchorElNav(event.currentTarget)
   }
 
-  const handleCloseFilterOptions = () => {
+  const handleCloseSortbyOptions = () => {
     setAnchorElNav(null)
   }
 
-  const hanldeFilterOptionChoose = (option) => {
-    setFilterOption(option)
+  const hanldeSortbyOptionChoose = (option) => {
+    handleSortByChange({ target: { value: option } })
     setAnchorElNav(null)
+  }
+
+  const handleOpenCategory = (event) => {
+    setAnchorElCategory(event.currentTarget)
+  }
+
+  const handleCloseCategory = () => {
+    setAnchorElCategory(null)
+  }
+
+  const handleCategoryChoose = (category) => {
+    handleCategoryChange({ target: { value: category } })
+    setAnchorElCategory(null)
   }
 
   return (
@@ -79,15 +116,15 @@ export default function ItemList({ children }) {
         alignItems={{ sm: 'center' }}
         justifyContent="flex-start"
       >
-        <SearchBar />
+        <SearchBar value={search} handleChange={handleSearchChange} />
         <Stack direction="row" gap={1.5} alignItems="center">
           <Typography variant="body1">Price range</Typography>
-          <InputBaseStyled type="number" />
-          <InputBaseStyled type="number" />
+          <InputBaseStyled type="number" value={startPrice} onChange={handleStartPriceChange} />
+          <InputBaseStyled type="number" value={endPrice} onChange={handleEndPriceChange} />
         </Stack>
         <Stack direction="row" gap={0.5} alignItems="center">
-          <Typography variant="body1">{filterOption}</Typography>
-          <ExpandMoreIconStyled fontSize="large" onClick={handleFilterOptions} />
+          <Typography variant="body1">{sortBy}</Typography>
+          <ExpandMoreIconStyled fontSize="large" onClick={handleOpenSortby} />
           <Menu
             anchorEl={anchorElNav}
             anchorOrigin={{
@@ -100,11 +137,35 @@ export default function ItemList({ children }) {
               horizontal: 'right',
             }}
             open={Boolean(anchorElNav)}
-            onClose={handleCloseFilterOptions}
+            onClose={handleCloseSortbyOptions}
           >
-            {filterOptionsList.map((option) => (
-              <MenuItem key={option} onClick={() => hanldeFilterOptionChoose(option)}>
+            {filterOptions.map((option) => (
+              <MenuItem key={option} onClick={() => hanldeSortbyOptionChoose(option)}>
                 {option}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Stack>
+        <Stack direction="row" gap={0.5} alignItems="center">
+          <Typography variant="body1">{category}</Typography>
+          <ExpandMoreIconStyled fontSize="large" onClick={handleOpenCategory} />
+          <Menu
+            anchorEl={anchorElCategory}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElCategory)}
+            onClose={handleCloseCategory}
+          >
+            {categories?.map((category) => (
+              <MenuItem key={`category-${category}`} onClick={() => handleCategoryChoose(category)}>
+                {category}
               </MenuItem>
             ))}
           </Menu>
@@ -113,7 +174,11 @@ export default function ItemList({ children }) {
 
       <ListGridStyle>{children}</ListGridStyle>
 
-      <PaginationButtonsStyled />
+      <PaginationButtonsStyled
+        page={page}
+        handlePageChange={handlePageChange}
+        pageCount={totalPages}
+      />
     </>
   )
 }
