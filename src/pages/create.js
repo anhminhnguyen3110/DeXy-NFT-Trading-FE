@@ -1,13 +1,12 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen, Duy Khoa Pham
  * Created date: 25/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 22/09/2023
  */
 import Head from 'next/head'
-import { Button, Container, Stack, Typography, styled } from '@mui/material'
+import { Button, Container, Stack, Typography, Checkbox, styled } from '@mui/material'
 import InputFileUpload from '@/components/UploadButton'
 import InputBase from '@/components/InputBase'
-import CheckboxComponent from '@/components/CheckBox'
 import { useSnackbar } from 'notistack'
 
 const RootStyled = styled(Container)(() => ({
@@ -102,13 +101,13 @@ export default function CreateDexyItem() {
 
         <div>
           <Stack direction="row" gap={1} alignItems="center">
-            <CheckboxComponent />
+            <Checkbox disableRipple={true} />
             <Typography variant="body1">
               I approve that I own and have rights of publication and sale of DeXy items
             </Typography>
           </Stack>
           <Stack direction="row" gap={1} alignItems="center">
-            <CheckboxComponent />
+            <Checkbox disableRipple={true} />
             <Typography variant="body1">I agree to the terms and conditions</Typography>
           </Stack>
         </div>

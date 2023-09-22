@@ -1,21 +1,24 @@
 /**
  * Author: Kien Quoc Mai
  * Created date: 23/08/2023
- * Last modified Date: 17/09/2023
+ * Last modified Date: 22/09/2023
  */
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAccount, useBalance } from 'wagmi'
+import { useSnackbar } from 'notistack'
+import axios from '@/utils/axios'
 import Image from 'next/image'
 import Head from 'next/head'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
-import { Stack, Typography, Grid, styled, useTheme } from '@mui/material'
+import { Stack, Typography, Grid, Skeleton, styled, useTheme } from '@mui/material'
 import GridV2 from '@mui/material/Unstable_Grid2'
 import ActionAreaCard from '@/components/Card'
 import CoreDetailsSection from '@/layouts/item/CoreDetailsSection'
 import PlaceOffer from '@/layouts/item/PlaceOffer'
 import NonSsrWrapper from '@/utils/NonSsrWrapper'
+import { walletAddressFormat } from '@/utils/format'
 
 // calculate the carousel responsive configuration based on the theme breakpoints
 const CarouselStyled = styled(Carousel)(({ theme }) => ({
@@ -67,14 +70,92 @@ export default function ItemDetail() {
   const router = useRouter()
   const { id } = router.query
   const theme = useTheme()
-  // TODO: replace the ownerUsername and ownerAddress with the real data
-  const ownerUsername = 'John Doe'
-  const ownerAddress = 'abcxyz'
   const { address: userAddress, isConnected } = useAccount()
   const { data: balance } = useBalance({
     address: userAddress,
   })
   const [openPlaceOffer, setOpenPlaceOffer] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
+  const [itemLoading, setItemLoading] = useState(true)
+  const [itemCoreDetails, setItemCoreDetails] = useState({
+    name: '',
+    image: '',
+    price: '',
+  })
+  const [itemMetadata, setItemMetadata] = useState({
+    description: '',
+    createdDate: '',
+    createdBy: '',
+    category: '',
+  })
+  const [itemOwner, setItemOwner] = useState({
+    username: '',
+    address: '',
+    image: '',
+  })
+  const [offerLoading, setOfferLoading] = useState(true)
+  const [offerPage, setOfferPage] = useState(0)
+  const [offerMaxPage, setOfferMaxPage] = useState(0)
+  const [offersList, setOffersList] = useState([])
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      setItemLoading(true)
+      try {
+        const {
+          data: { data: itemData },
+        } = await axios.get(`/item/${id}`)
+        const {
+          data: { data: ownerData },
+        } = await axios.get(`/users/${itemData.item_owner_address}`)
+        const { data: offersData } = await axios.get(
+          `/offers?item_id=${id}&limit=5&page=${offerPage}`
+        )
+
+        setItemCoreDetails({
+          name: itemData.item_name,
+          image: itemData.item_image,
+          price: itemData.item_fixed_price,
+        })
+        setItemMetadata({
+          description: itemData.item_description,
+          createdDate: itemData.item_created_date,
+          createdBy: itemData.item_created_by_address,
+          category: itemData.item_category,
+        })
+        setItemOwner({
+          username: ownerData.user_name,
+          address: ownerData.user_address,
+          image: ownerData.user_image,
+        })
+        setOffersList(offersData.data)
+        setOfferMaxPage(Math.ceil(offersData.total_items / offersData.item_per_page))
+      } catch (error) {
+        enqueueSnackbar('Error while fetching item', { variant: 'error' })
+      } finally {
+        setItemLoading(false)
+      }
+    }
+    if (id) fetchItem()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, enqueueSnackbar])
+
+  const fetchOffers = async () => {
+    setOfferLoading(true)
+    try {
+      const { data: offersData } = await axios.get(`/offers?${id}&limit=5&page=${offerPage}`)
+      setOffersList(offersData.data)
+    } catch (error) {
+      enqueueSnackbar('Error while fetching offers', { variant: 'error' })
+    } finally {
+      setOfferLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (id && enqueueSnackbar) fetchOffers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, enqueueSnackbar, offerPage])
 
   const carouselResponsiveConfig = useMemo(
     () =>
@@ -101,7 +182,33 @@ export default function ItemDetail() {
     [theme]
   )
 
-  const handlePlaceOffer = (price) => {}
+  const handlePlaceOffer = async (price) => {
+    try {
+      await axios.post('/makeoffer', {
+        item_id: id,
+        price,
+      })
+      enqueueSnackbar('Offer placed successfully', { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar('Error while processing the offer', { variant: 'error' })
+    }
+  }
+
+  const handleTakeOver = async () => {
+    try {
+      await axios.post('/takeover', {
+        item_id: id,
+      })
+      enqueueSnackbar('Take over successfully', { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar('Error while taking over', { variant: 'error' })
+    }
+  }
+
+  const handleOfferPageChange = (_event, value) => {
+    setOfferPage(value - 1)
+    fetchOffers()
+  }
 
   // Render the ItemDetail component
   return (
@@ -119,17 +226,33 @@ export default function ItemDetail() {
               sx={{ flexGrow: 1, width: '100%' }}
             >
               <GridV2 xs={12} md={7}>
-                <CoreDetailsSection
-                  username={ownerUsername}
-                  address={ownerAddress}
-                  showActionButtons={isConnected && ownerAddress !== userAddress}
-                  onPlaceOffer={() => setOpenPlaceOffer(true)}
-                />
+                {itemLoading ? (
+                  <Skeleton variant="rounded" height={500} />
+                ) : (
+                  <CoreDetailsSection
+                    owner={itemOwner}
+                    item={itemCoreDetails}
+                    offers={offersList}
+                    offerLoading={offerLoading}
+                    offerPage={offerPage + 1}
+                    offerMaxPage={offerMaxPage}
+                    handleOfferPageChange={handleOfferPageChange}
+                    showActionButtons={
+                      isConnected && itemOwner.address && itemOwner.address !== userAddress
+                    }
+                    onPlaceOffer={() => setOpenPlaceOffer(true)}
+                    onTakeOver={handleTakeOver}
+                  />
+                )}
               </GridV2>
               <GridV2 xs={12} md={5}>
-                <ImageContainer>
-                  <Image src="/bean.png" alt={`image-${id}`} fill priority />
-                </ImageContainer>
+                {itemLoading ? (
+                  <Skeleton variant="rounded" height={500} />
+                ) : (
+                  <ImageContainer>
+                    <Image src={itemCoreDetails.image} alt={`image-${id}`} fill priority />
+                  </ImageContainer>
+                )}
               </GridV2>
             </GridV2>
           </Grid>
@@ -137,23 +260,38 @@ export default function ItemDetail() {
             <Typography variant="h3" gutterBottom>
               Description
             </Typography>
-            <Typography variant="body1" maxWidth="60ch">
-              Lorem ipsum dolor sit amet. Sed iure ipsam ut libero odit aut earum assumenda aut esse
-              perspiciatis sit voluptates consequuntur sit omnis commodi qui neque dolores. Ut quia
-              quia ab fugiat velit et rerum aspernatur vel veniam asperiores sed voluptas aperiam
-              qui reprehenderit molestiae et quae quas. Vel dicta similique aut natus illum est
-              mollitia consequuntur.
-            </Typography>
+            {itemLoading ? (
+              <Skeleton variant="rounded" height={160} />
+            ) : (
+              <Typography variant="body1" maxWidth="60ch">
+                {itemMetadata.description}
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12} md={5}>
             <Typography variant="h3" gutterBottom>
               Asset detail
             </Typography>
             <Stack gap="0.2rem">
-              <Typography variant="body1">Created date: 19/08/2023</Typography>
-              <Typography variant="body1">Created by: abcxyz</Typography>
-              <Typography variant="body1">Owned by: abcxyz</Typography>
-              <Typography variant="body1">Fix price: 0.09</Typography>
+              {itemLoading ? (
+                <>
+                  <Skeleton variant="text" height={40} />
+                  <Skeleton variant="text" height={40} />
+                  <Skeleton variant="text" height={40} />
+                  <Skeleton variant="text" height={40} />
+                </>
+              ) : (
+                <>
+                  <Typography variant="body1">{`Created date: ${itemMetadata.createdDate}`}</Typography>
+                  <Typography variant="body1">{`Created by: ${walletAddressFormat(
+                    itemMetadata.createdBy
+                  )}`}</Typography>
+                  <Typography variant="body1">{`Owned by: ${walletAddressFormat(
+                    itemOwner.address
+                  )}`}</Typography>
+                  <Typography variant="body1">{`Fix price: ${itemCoreDetails.price}`}</Typography>
+                </>
+              )}
             </Stack>
           </Grid>
           <Grid item xs={12}>
@@ -165,15 +303,24 @@ export default function ItemDetail() {
               infinite={true}
               keyBoardControl={true}
             >
-              {Array.from({ length: 10 }).map((_, index) => (
-                <ActionAreaCard
-                  key={`more-from-this-user-${index}`}
-                  image="/space-doge-md.jpeg"
-                  title={`Space Doge ${index + 1}`}
-                  price={Math.round(0.09 * (index + 1) * 100) / 100}
-                  onClick={() => router.push(`/item/${index + 1}`)}
-                />
-              ))}
+              {itemLoading
+                ? Array.from({ length: 10 }).map((_, index) => (
+                    <Skeleton
+                      variant="rounded"
+                      height={270}
+                      width={200}
+                      key={`more-from-this-user-loading-${index}`}
+                    />
+                  ))
+                : Array.from({ length: 10 }).map((_, index) => (
+                    <ActionAreaCard
+                      key={`more-from-this-user-${index}`}
+                      image="/space-doge-md.jpeg"
+                      title={`Space Doge ${index + 1}`}
+                      price={Math.round(0.09 * (index + 1) * 100) / 100}
+                      onClick={() => router.push(`/item/${index + 1}`)}
+                    />
+                  ))}
             </CarouselStyled>
           </Grid>
         </Grid>
@@ -182,7 +329,7 @@ export default function ItemDetail() {
           handleClose={() => setOpenPlaceOffer(false)}
           handleSubmit={handlePlaceOffer}
           balance={balance?.formatted}
-          itemName={'Bean #14525'}
+          itemName={itemCoreDetails.name}
         />
       </NonSsrWrapper>
     </>
