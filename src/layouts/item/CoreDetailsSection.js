@@ -41,6 +41,7 @@ const columns = [
  * @param {boolean} showActionButtons whether to show action buttons or not
  * @param {function} onPlaceOffer place offer button handler
  * @param {function} onTakeOver take over button handler
+ * @param {function} onAddToCart add to cart button handler
  * @returns {JSX.Element}
  */
 export default function CoreDetailsSection({
@@ -54,6 +55,7 @@ export default function CoreDetailsSection({
   showActionButtons = true,
   onPlaceOffer,
   onTakeOver,
+  onAddToCart,
 }) {
   const isSm = useResponsive('down', 'sm')
   const rows = useMemo(
@@ -75,6 +77,7 @@ export default function CoreDetailsSection({
     [offers]
   )
   const [takeOverLoading, setTakeOverLoading] = useState(false)
+  const [addToCartLoading, setAddToCartLoading] = useState(false)
 
   const handleTakeOver = async () => {
     setTakeOverLoading(true)
@@ -82,6 +85,15 @@ export default function CoreDetailsSection({
       await onTakeOver()
     } finally {
       setTakeOverLoading(false)
+    }
+  }
+
+  const handleAddToCart = async () => {
+    setAddToCartLoading(true)
+    try {
+      await onAddToCart()
+    } finally {
+      setAddToCartLoading(false)
     }
   }
 
@@ -149,9 +161,14 @@ export default function CoreDetailsSection({
                 <Button fullWidth variant="outlined" onClick={onPlaceOffer}>
                   Make an offer
                 </Button>
-                <Button variant="contained" sx={{ minWidth: '3.5rem' }}>
+                <LoadingButton
+                  variant="contained"
+                  sx={{ minWidth: '3.5rem' }}
+                  onClick={handleAddToCart}
+                  loading={addToCartLoading}
+                >
                   <AddShoppingCartRoundedIcon sx={{ fontSize: { xs: '1.4rem', sm: '1.6rem' } }} />
-                </Button>
+                </LoadingButton>
               </Stack>
             </Stack>
           )}

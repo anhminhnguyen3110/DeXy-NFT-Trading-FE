@@ -205,6 +205,17 @@ export default function ItemDetail() {
     }
   }
 
+  const handleAddToCart = async () => {
+    try {
+      await axios.post('/shopping-cart/add-item', {
+        item_id: id,
+      })
+      enqueueSnackbar('Added to cart successfully', { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar('Error while adding to cart', { variant: 'error' })
+    }
+  }
+
   const handleOfferPageChange = (_event, value) => {
     setOfferPage(value - 1)
     fetchOffers()
@@ -227,7 +238,7 @@ export default function ItemDetail() {
             >
               <GridV2 xs={12} md={7}>
                 {itemLoading ? (
-                  <Skeleton variant="rounded" height={500} />
+                  <Skeleton variant="rounded" height={550} />
                 ) : (
                   <CoreDetailsSection
                     owner={itemOwner}
@@ -242,6 +253,7 @@ export default function ItemDetail() {
                     }
                     onPlaceOffer={() => setOpenPlaceOffer(true)}
                     onTakeOver={handleTakeOver}
+                    onAddToCart={handleAddToCart}
                   />
                 )}
               </GridV2>
