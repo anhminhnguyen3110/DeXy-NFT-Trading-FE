@@ -44,6 +44,11 @@ export default function ThemeProvider({ children }) {
                 backgroundColor: palette.dark.grey[100],
                 opacity: 0.8,
               },
+              '&.Mui-disabled': {
+                backgroundColor: palette.dark.grey[100],
+                color: palette.dark.grey[800],
+                opacity: 0.5,
+              },
             },
             outlined: {
               color: palette.dark.text.primary,
@@ -55,6 +60,12 @@ export default function ThemeProvider({ children }) {
                 borderColor: palette.dark.grey[200],
                 borderWidth: 2,
                 opacity: 0.7,
+              },
+              '&.Mui-disabled': {
+                color: palette.dark.text.primary,
+                borderColor: palette.dark.grey[200],
+                borderWidth: 2,
+                opacity: 0.5,
               },
             },
           },
