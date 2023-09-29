@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 18/08/2023
- * Last modified Date: 29/08/2023
+ * Last modified Date: 29/09/2023
  */
 import { useState } from 'react'
 import { InputBase, Popover, alpha, styled } from '@mui/material'
@@ -103,7 +103,6 @@ export default function SearchBar({ uniqueId, value, handleChange, searchResult,
         </SearchIconWrapper>
         <StyledInputBase
           shrink={shrink}
-          autoFocus
           placeholder="Search…"
           inputProps={{ 'aria-label': 'search' }}
           value={value}
