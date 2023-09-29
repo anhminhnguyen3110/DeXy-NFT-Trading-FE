@@ -97,6 +97,8 @@ export default function ItemDetail() {
   const [offerPage, setOfferPage] = useState(0)
   const [offerMaxPage, setOfferMaxPage] = useState(0)
   const [offersList, setOffersList] = useState([])
+  const [moreItemsFromUserLoading, setMoreItemsFromUserLoading] = useState(true)
+  const [moreItemsFromUser, setMoreItemsFromUser] = useState([])
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -121,7 +123,7 @@ export default function ItemDetail() {
           description: itemData.item_description,
           createdDate: itemData.item_created_date,
           createdBy: itemData.item_created_by_address,
-          category: itemData.item_category,
+          category: itemData.item_category_name,
         })
         setItemOwner({
           username: ownerData.user_name,
@@ -156,6 +158,25 @@ export default function ItemDetail() {
     if (id && enqueueSnackbar) fetchOffers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, enqueueSnackbar, offerPage])
+
+  useEffect(() => {
+    const fetchMoreItemsFromUser = async () => {
+      setMoreItemsFromUserLoading(true)
+      try {
+        const {
+          data: { data: moreItemsFromUserData },
+        } = await axios.get(
+          `/items?limit=10&page=0&user_address=${itemOwner.address}}&sort_by="RECENTLY_LISTED"`
+        )
+        setMoreItemsFromUser(moreItemsFromUserData)
+      } catch (error) {
+        enqueueSnackbar('Error while fetching more items from user', { variant: 'error' })
+      } finally {
+        setMoreItemsFromUserLoading(false)
+      }
+    }
+    if (itemOwner.address) fetchMoreItemsFromUser()
+  }, [itemOwner.address, enqueueSnackbar])
 
   const carouselResponsiveConfig = useMemo(
     () =>
@@ -291,9 +312,11 @@ export default function ItemDetail() {
                   <Skeleton variant="text" height={40} />
                   <Skeleton variant="text" height={40} />
                   <Skeleton variant="text" height={40} />
+                  <Skeleton variant="text" height={40} />
                 </>
               ) : (
                 <>
+                  <Typography variant="body1">{`Category: ${itemMetadata.category}`}</Typography>
                   <Typography variant="body1">{`Created date: ${itemMetadata.createdDate}`}</Typography>
                   <Typography variant="body1">{`Created by: ${walletAddressFormat(
                     itemMetadata.createdBy
@@ -315,7 +338,7 @@ export default function ItemDetail() {
               infinite={true}
               keyBoardControl={true}
             >
-              {itemLoading
+              {itemLoading || moreItemsFromUserLoading
                 ? Array.from({ length: 10 }).map((_, index) => (
                     <Skeleton
                       variant="rounded"
@@ -324,13 +347,15 @@ export default function ItemDetail() {
                       key={`more-from-this-user-loading-${index}`}
                     />
                   ))
-                : Array.from({ length: 10 }).map((_, index) => (
+                : moreItemsFromUser.map((item) => (
                     <ActionAreaCard
-                      key={`more-from-this-user-${index}`}
-                      image="/space-doge-md.jpeg"
-                      title={`Space Doge ${index + 1}`}
-                      price={Math.round(0.09 * (index + 1) * 100) / 100}
-                      onClick={() => router.push(`/item/${index + 1}`)}
+                      userAddress={item.item_owner_address}
+                      key={`item-details-item-${item.item_id}`}
+                      image={item.item_image}
+                      title={item.item_name}
+                      price={item.item_fixed_price}
+                      onClick={() => router.push(`/item/${item.item_id}`)}
+                      sx={{ width: '70%' }}
                     />
                   ))}
             </CarouselStyled>
