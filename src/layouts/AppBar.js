@@ -116,10 +116,8 @@ const SearchResultTitle = styled(MenuItem)(() => ({
   opacity: '1 !important',
 }))
 
-const pages = [
-  ['Marketplace', '/marketplace'],
-  ['Create', '/create'],
-]
+const pages = [['Marketplace', '/marketplace']]
+const pagesLogin = [['Create', '/create']]
 const accountMenuNotLogin = [['Create wallet', 'https://metamask.io/']]
 
 const accountMenuLogin = [['My account', '/account/']]
@@ -204,8 +202,8 @@ function ResponsiveAppBar() {
         `${process.env.NEXT_PUBLIC_API_URL}/search?search_input=${event.target.value}`
       )
       setSearchResult({
-        items: response.data.data.items,
-        users: response.data.data.users,
+        items: response.data.items.data,
+        users: response.data.users.data,
       })
     } catch (error) {
       enqueueSnackbar('Failed to fetch search result', { variant: 'error' })
@@ -375,7 +373,7 @@ function ResponsiveAppBar() {
                 display: { xs: 'block', sm: 'none' },
               }}
             >
-              {pages.map(([page, location]) => (
+              {[...pages, ...(isConnected ? pagesLogin : [])].map(([page, location]) => (
                 <MenuItem key={page} onClick={() => handleClickMenu(location)}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
@@ -401,7 +399,7 @@ function ResponsiveAppBar() {
                 searchResult={renderSearchResult()}
               />
             </div>
-            {pages.map(([page, location]) => (
+            {[...pages, ...(isConnected ? pagesLogin : [])].map(([page, location]) => (
               <NavButton
                 key={page}
                 onClick={() => handleClickMenu(location)}
