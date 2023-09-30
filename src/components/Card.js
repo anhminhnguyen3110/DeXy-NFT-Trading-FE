@@ -28,11 +28,12 @@ const CardStyled = styled(Card)(({ theme }) => ({
  * @param {string} price item price
  * @param {function} onClick click handler
  * @param {string} userAddress user wallet address
+ * @param {object} sx style object
  * @returns {JSX.Element}
  */
-export default function ActionAreaCard({ image, title, price, onClick, userAddress }) {
+export default function ActionAreaCard({ image, title, price, onClick, userAddress, sx }) {
   return (
-    <CardStyled>
+    <CardStyled sx={sx}>
       <CardActionArea onClick={onClick}>
         <CardMedia component="img" height="180" image={image} alt={title} />
         <CardContent>

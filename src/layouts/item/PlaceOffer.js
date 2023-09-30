@@ -1,16 +1,16 @@
 /**
  * Author: Kien Quoc Mai
  * Created date: 17/09/2023
- * Last modified Date: 17/09/2023
+ * Last modified Date: 22/09/2023
  */
 import { useState } from 'react'
 import useResponsive from '@/hooks/useResponsive'
-import { Dialog, IconButton, Button, Stack, Typography, styled } from '@mui/material'
+import { Dialog, IconButton, Stack, Typography, Checkbox, styled } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import TextFieldWithLabel from '../../components/TextFieldWithLabel'
 import { useSnackbar } from 'notistack'
 import EthereumIcon from '@/components/EthereumIcon'
-import CheckboxComponent from '@/components/CheckBox'
 
 const DialogStyled = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -43,12 +43,29 @@ const CloseButton = styled(IconButton)(({ theme }) => ({
 export default function PlaceOffer({ open, handleClose, handleSubmit, balance, itemName }) {
   const [price, setPrice] = useState(0)
   const fullScreen = useResponsive('down', 'sm')
+  const [loading, setLoading] = useState(false)
+  const [checked, setChecked] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
-  const handleClickSubmit = () => {
-    handleSubmit(price)
-    handleClose()
-    enqueueSnackbar('Profile updated', { variant: 'success' })
+  const handleCheck = (event) => {
+    setChecked(event.target.checked)
+  }
+
+  const handleClickSubmit = async () => {
+    if (!checked) {
+      enqueueSnackbar('Please agree to the terms and conditions', { variant: 'error' })
+      return
+    }
+
+    setLoading(true)
+    try {
+      await handleSubmit(price)
+    } finally {
+      setLoading(false)
+      setChecked(false)
+      setPrice(0)
+      handleClose()
+    }
   }
 
   return (
@@ -81,12 +98,12 @@ export default function PlaceOffer({ open, handleClose, handleSubmit, balance, i
           </Stack>
         </Stack>
         <Stack direction="row" gap={1} alignItems="center">
-          <CheckboxComponent />
+          <Checkbox disableRipple checked={checked} onChange={handleCheck} />
           <Typography variant="body2">I agree to the terms and conditions</Typography>
         </Stack>
-        <Button variant="contained" onClick={handleClickSubmit}>
+        <LoadingButton variant="contained" onClick={handleClickSubmit} loading={loading}>
           Place your offer
-        </Button>
+        </LoadingButton>
       </Stack>
     </DialogStyled>
   )

@@ -70,6 +70,28 @@ export default function ThemeProvider({ children }) {
             },
           },
         },
+        MuiLoadingButton: {
+          styleOverrides: {
+            root: {
+              '&.Mui-disabled': {
+                opacity: 0.5,
+                backgroundColor: palette.dark.grey[100],
+              },
+            },
+          },
+        },
+        MuiCheckbox: {
+          styleOverrides: {
+            root: {
+              paddingInline: 0,
+              '& .MuiSvgIcon-root': {
+                width: '1.5rem',
+                height: '1.5rem',
+                color: palette.dark.primary.dark,
+              },
+            },
+          },
+        },
       },
     }),
     []

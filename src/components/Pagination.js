@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 18/08/2023
- * Last modified Date: 19/09/2023
+ * Last modified Date: 22/09/2023
  */
 import { useState } from 'react'
 import { Pagination, Stack, styled, alpha } from '@mui/material'
@@ -30,6 +30,8 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
 
 /**
  *
+ * @param {int} page current page
+ * @param {function} handlePageChange page change handler
  * @param {int} spacing spacing between buttons
  * @param {int} pageCount number of pages
  * @param {object} props other props
