@@ -1,7 +1,7 @@
 /**
  * Author: Kien Quoc Mai, Anh Minh Nguyen
  * Created date: 24/08/2023
- * Last modified Date: 19/09/2023
+ * Last modified Date: 29/09/2023
  */
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
@@ -47,7 +47,7 @@ export default function Account({ categories }) {
   const { address: userAddress } = useAccount()
   const { enqueueSnackbar } = useSnackbar()
   const [itemList, setItemList] = useState([])
-  const [totalPages, setTotalPages] = useState(2)
+  const [totalItemPages, setTotalPages] = useState(2)
   const [itemLoading, setItemLoading] = useState(false)
   const {
     search,
@@ -64,38 +64,69 @@ export default function Account({ categories }) {
     handlePageChange,
   } = useItemListFilter(categories)
 
-  // get item list and transaction history of user
   useEffect(() => {
-    if (userInfo) {
-      const data = dummyData.filter((item) => item.OwnedByUserAddress === userInfo.address)
-      setTransactionData(transactionDummyData)
-      setItemList(data)
-    }
-  }, [userInfo])
-
-  // get user info from address
-  useEffect(() => {
-    if (address) {
-      const user = userList.filter((item) => item.address === address)[0]
-      if (!user) {
-        router.push('/404')
-        return
+    const fetchItems = async () => {
+      setItemLoading(true)
+      try {
+        const response = await axios.get(
+          `/items?search_input=${search}&limit=4&page=${
+            page - 1
+          }&price_start=${startPrice}&price_end=${endPrice}&sort_by=${sortBy}&category=${category}}&user_address=${address}`
+        )
+        setItemList(response.data.data)
+        setTotalPages(Math.ceil(response.data.total_items / response.data.item_per_page))
+      } catch {
+        enqueueSnackbar('Failed to load items data', { variant: 'error' })
+      } finally {
+        setItemLoading(false)
       }
-      setUserInfo(user)
     }
-  }, [address, router])
+    fetchItems()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, category, endPrice, page, search, sortBy, startPrice])
 
-  // close edit dialog
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`/users/${address}`)
+        setUserInfo(response.data.data)
+      } catch {
+        router.push('/404')
+        enqueueSnackbar('Failed to load user data', { variant: 'error' })
+      }
+    }
+    if (address) fetchUser()
+  }, [address, enqueueSnackbar, router])
+
   const handleCloseEdit = () => {
     setOpenEdit(false)
   }
 
   const handleCopyAdress = () => {
-    copy(userInfo.address)
+    copy(userInfo.user_address)
     enqueueSnackbar('Address copied to clipboard', { variant: 'success' })
   }
 
-  // render the account page
+  const handleAccountEditSubmit = async (avatar, username, email) => {
+    try {
+      const formData = new FormData()
+      formData.append('user_image', avatar)
+      formData.append('user_name', username)
+      formData.append('user_email', email)
+      await axios({
+        method: 'patch',
+        url: `/users/edit/${userAddress}`,
+        data: formData,
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
+        },
+      })
+      enqueueSnackbar('Profile updated', { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar('Error updating profile', { variant: 'error' })
+    }
+  }
+
   return (
     <>
       <Head>
@@ -107,21 +138,21 @@ export default function Account({ categories }) {
             {userInfo && (
               <Stack gap={2}>
                 <Avatar
-                  src="/avatar.jpeg"
+                  src={userInfo.user_image}
                   variant="circular"
                   sx={{ width: '7.5rem', height: '7.5rem' }}
                 />
                 <Stack gap={1}>
-                  <Typography variant="h5">{userInfo.name}</Typography>
+                  <Typography variant="h5">{userInfo.user_name}</Typography>
                   <Typography
                     variant="subtitle1"
                     fontWeight="600"
                     onClick={handleCopyAdress}
                     sx={{ cursor: 'pointer' }}
                   >
-                    {userInfo.address ? walletAddressFormat(userInfo.address) : ''}
+                    {userInfo.user_address ? walletAddressFormat(userInfo.user_address) : ''}
                   </Typography>
-                  <Typography variant="body1">{userInfo.email}</Typography>
+                  <Typography variant="body1">{userInfo.uswer_email}</Typography>
                 </Stack>
                 {address === userAddress && (
                   <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
@@ -145,7 +176,7 @@ export default function Account({ categories }) {
                   sortBy={sortBy}
                   category={category}
                   page={page}
-                  totalPages={totalPages}
+                  totalPages={totalItemPages}
                   handleSearchChange={handleSearchChange}
                   handleStartPriceChange={handleStartPriceChange}
                   handleEndPriceChange={handleEndPriceChange}
@@ -154,9 +185,9 @@ export default function Account({ categories }) {
                   handlePageChange={handlePageChange}
                 >
                   {itemLoading
-                    ? Array.from({ length: 12 }).map((_, index) => (
+                    ? Array.from({ length: 4 }).map((_, index) => (
                         <Skeleton
-                          key={`marketplace-item-skeleton-${index}`}
+                          key={`account-item-skeleton-${index}`}
                           variant="rounded"
                           width={210}
                           height={300}
@@ -164,11 +195,12 @@ export default function Account({ categories }) {
                       ))
                     : itemList.map((item) => (
                         <ActionAreaCard
-                          key={`account-item-${item.id}`}
-                          image={item.image}
-                          title={item.title}
-                          price={item.FixPrice}
-                          onClick={() => router.push(`/item/${item.id}`)}
+                          userAddress={item.item_owner_address}
+                          key={`account-item-${item.item_id}`}
+                          image={item.item_image}
+                          title={item.item_name}
+                          price={item.item_fixed_price}
+                          onClick={() => router.push(`/item/${item.item_id}`)}
                         />
                       ))}
                 </ItemList>
@@ -189,7 +221,12 @@ export default function Account({ categories }) {
           </Grid>
         </Grid>
 
-        <AccountEdit open={openEdit} handleClose={handleCloseEdit} handleSubmit={handleCloseEdit} />
+        <AccountEdit
+          userInfo={userInfo}
+          open={openEdit}
+          handleClose={handleCloseEdit}
+          handleSubmit={handleAccountEditSubmit}
+        />
       </NonSSRWrapper>
     </>
   )
