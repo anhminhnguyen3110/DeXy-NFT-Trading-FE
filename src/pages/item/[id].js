@@ -5,8 +5,9 @@
  */
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount, useContractWrite } from 'wagmi'
 import { useSnackbar } from 'notistack'
+import { parseEther, getAddress } from 'viem'
 import axios from '@/utils/axios'
 import Image from 'next/image'
 import Head from 'next/head'
@@ -16,9 +17,9 @@ import { Stack, Typography, Grid, Skeleton, styled, useTheme } from '@mui/materi
 import GridV2 from '@mui/material/Unstable_Grid2'
 import ActionAreaCard from '@/components/Card'
 import CoreDetailsSection from '@/layouts/item/CoreDetailsSection'
-import PlaceOffer from '@/layouts/item/PlaceOffer'
 import NonSsrWrapper from '@/utils/NonSsrWrapper'
 import { walletAddressFormat } from '@/utils/format'
+import contractAbi from '@/utils/contractAbi.json'
 
 // calculate the carousel responsive configuration based on the theme breakpoints
 const CarouselStyled = styled(Carousel)(({ theme }) => ({
@@ -71,16 +72,12 @@ export default function ItemDetail() {
   const { id } = router.query
   const theme = useTheme()
   const { address: userAddress, isConnected } = useAccount()
-  const { data: balance } = useBalance({
-    address: userAddress,
-  })
-  const [openPlaceOffer, setOpenPlaceOffer] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
   const [itemLoading, setItemLoading] = useState(true)
   const [itemCoreDetails, setItemCoreDetails] = useState({
     name: '',
     image: '',
-    price: '',
+    price: 0,
   })
   const [itemMetadata, setItemMetadata] = useState({
     description: '',
@@ -93,12 +90,14 @@ export default function ItemDetail() {
     address: '',
     image: '',
   })
-  const [offerLoading, setOfferLoading] = useState(true)
-  const [offerPage, setOfferPage] = useState(0)
-  const [offerMaxPage, setOfferMaxPage] = useState(0)
-  const [offersList, setOffersList] = useState([])
+  const [ownerLoading, setOwnerLoading] = useState(true)
   const [moreItemsFromUserLoading, setMoreItemsFromUserLoading] = useState(true)
   const [moreItemsFromUser, setMoreItemsFromUser] = useState([])
+  const { writeAsync: writeContract } = useContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+    abi: contractAbi,
+    functionName: 'buy',
+  })
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -107,12 +106,6 @@ export default function ItemDetail() {
         const {
           data: { data: itemData },
         } = await axios.get(`/item/${id}`)
-        const {
-          data: { data: ownerData },
-        } = await axios.get(`/users/${itemData.item_owner_address}`)
-        const { data: offersData } = await axios.get(
-          `/offers?item_id=${id}&limit=5&page=${offerPage}`
-        )
 
         setItemCoreDetails({
           name: itemData.item_name,
@@ -126,12 +119,10 @@ export default function ItemDetail() {
           category: itemData.item_category_name,
         })
         setItemOwner({
-          username: ownerData.user_name,
-          address: ownerData.user_address,
-          image: ownerData.user_image,
+          username: '',
+          address: itemData.item_owner_address,
+          image: '',
         })
-        setOffersList(offersData.data)
-        setOfferMaxPage(Math.ceil(offersData.total_items / offersData.item_per_page))
       } catch (error) {
         enqueueSnackbar('Error while fetching item', { variant: 'error' })
       } finally {
@@ -141,23 +132,6 @@ export default function ItemDetail() {
     if (id) fetchItem()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, enqueueSnackbar])
-
-  const fetchOffers = async () => {
-    setOfferLoading(true)
-    try {
-      const { data: offersData } = await axios.get(`/offers?${id}&limit=5&page=${offerPage}`)
-      setOffersList(offersData.data)
-    } catch (error) {
-      enqueueSnackbar('Error while fetching offers', { variant: 'error' })
-    } finally {
-      setOfferLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    if (id && enqueueSnackbar) fetchOffers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, enqueueSnackbar, offerPage])
 
   useEffect(() => {
     const fetchMoreItemsFromUser = async () => {
@@ -175,7 +149,28 @@ export default function ItemDetail() {
         setMoreItemsFromUserLoading(false)
       }
     }
-    if (itemOwner.address) fetchMoreItemsFromUser()
+    const fetchItemOwner = async () => {
+      setOwnerLoading(true)
+      try {
+        const {
+          data: { data: ownerData },
+        } = await axios.get(`/users/${itemOwner.address}`)
+        setItemOwner({
+          username: ownerData.user_name,
+          address: itemOwner.address,
+          image: ownerData.user_image,
+        })
+      } catch (error) {
+        enqueueSnackbar('Error while fetching item owner', { variant: 'error' })
+      } finally {
+        setOwnerLoading(false)
+      }
+    }
+
+    if (itemOwner.address) {
+      fetchMoreItemsFromUser()
+      fetchItemOwner()
+    }
   }, [itemOwner.address, enqueueSnackbar])
 
   const carouselResponsiveConfig = useMemo(
@@ -203,26 +198,21 @@ export default function ItemDetail() {
     [theme]
   )
 
-  const handlePlaceOffer = async (price) => {
-    try {
-      await axios.post('/makeoffer', {
-        item_id: id,
-        price,
-      })
-      enqueueSnackbar('Offer placed successfully', { variant: 'success' })
-    } catch (error) {
-      enqueueSnackbar('Error while processing the offer', { variant: 'error' })
-    }
-  }
-
   const handleTakeOver = async () => {
     try {
-      await axios.post('/takeover', {
-        item_id: id,
+      await writeContract({
+        args: [
+          getAddress(itemOwner.address),
+          parseInt(id),
+          parseEther(itemCoreDetails.price.toString()),
+        ],
+        value: parseEther(itemCoreDetails.price.toString()),
+        from: getAddress(userAddress),
       })
-      enqueueSnackbar('Take over successfully', { variant: 'success' })
+      setItemOwner((prev) => ({ ...prev, address: userAddress }))
+      enqueueSnackbar('Order processed successfully', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Error while taking over', { variant: 'error' })
+      enqueueSnackbar('Error while processing the order. Please try again.', { variant: 'error' })
     }
   }
 
@@ -263,16 +253,13 @@ export default function ItemDetail() {
                 ) : (
                   <CoreDetailsSection
                     owner={itemOwner}
+                    ownerLoading={ownerLoading}
+                    description={itemMetadata.description}
                     item={itemCoreDetails}
-                    offers={offersList}
-                    offerLoading={offerLoading}
-                    offerPage={offerPage + 1}
-                    offerMaxPage={offerMaxPage}
                     handleOfferPageChange={handleOfferPageChange}
                     showActionButtons={
                       isConnected && itemOwner.address && itemOwner.address !== userAddress
                     }
-                    onPlaceOffer={() => setOpenPlaceOffer(true)}
                     onTakeOver={handleTakeOver}
                     onAddToCart={handleAddToCart}
                   />
@@ -289,19 +276,7 @@ export default function ItemDetail() {
               </GridV2>
             </GridV2>
           </Grid>
-          <Grid item xs={12} md={7}>
-            <Typography variant="h3" gutterBottom>
-              Description
-            </Typography>
-            {itemLoading ? (
-              <Skeleton variant="rounded" height={160} />
-            ) : (
-              <Typography variant="body1" maxWidth="60ch">
-                {itemMetadata.description}
-              </Typography>
-            )}
-          </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12}>
             <Typography variant="h3" gutterBottom>
               Asset detail
             </Typography>
@@ -361,13 +336,6 @@ export default function ItemDetail() {
             </CarouselStyled>
           </Grid>
         </Grid>
-        <PlaceOffer
-          open={openPlaceOffer}
-          handleClose={() => setOpenPlaceOffer(false)}
-          handleSubmit={handlePlaceOffer}
-          balance={balance?.formatted}
-          itemName={itemCoreDetails.name}
-        />
       </NonSsrWrapper>
     </>
   )

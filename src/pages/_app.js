@@ -30,7 +30,7 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) =>
   },
 }))
 
-const chains = [mainnet, localhost]
+const chains = [localhost, mainnet]
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const metadata = {
   name: 'Web3Modal',

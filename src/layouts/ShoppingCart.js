@@ -6,6 +6,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useAccount, useContractWrite } from 'wagmi'
+import { parseEther, getAddress } from 'viem'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
 import useResponsive from '@/hooks/useResponsive'
@@ -26,6 +28,7 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import RemoveShoppingCartRoundedIcon from '@mui/icons-material/RemoveShoppingCartRounded'
 import EthereumIcon from '@/components/EthereumIcon'
 import { walletAddressFormat } from '@/utils/format'
+import contractAbi from '@/utils/contractAbi.json'
 
 const DialogStyled = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -76,14 +79,16 @@ export default function ShoppingCart({ open, handleClose }) {
   const [removeItemLoading, setRemoveItemLoading] = useState(false)
   const [cartItems, setCartItems] = useState([])
   const totalPrice = useMemo(
-    () =>
-      Math.round(
-        cartItems.reduce((acc, item) => acc + item.item_fixed_price, 0),
-        [cartItems] * 100
-      ) / 100,
+    () => Math.round(cartItems.reduce((acc, item) => acc + item.item_fixed_price, 0) * 1000) / 1000,
     [cartItems]
   )
   const theme = useTheme()
+  const { address: userAddress, isConnected } = useAccount()
+  const { writeAsync: writeContract, error } = useContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+    abi: contractAbi,
+    functionName: 'batchBuy',
+  })
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -107,8 +112,16 @@ export default function ShoppingCart({ open, handleClose }) {
   const handleSubmit = async () => {
     setSubmitLoading(true)
     try {
-      await axios.post('/shopping-cart/placeorder', {
-        item_ids: cartItems.map((item) => item.item_id),
+      await writeContract({
+        args: [
+          cartItems.map((item) => getAddress(item.item_owner_address)),
+          cartItems.map((item) => item.item_id),
+          cartItems.map((item) => parseEther(item.item_fixed_price.toString())),
+        ],
+        value: parseEther(
+          cartItems.reduce((acc, item) => acc + item.item_fixed_price, 0).toString()
+        ),
+        from: getAddress(userAddress),
       })
       handleClose()
       setCartItems([])
@@ -255,7 +268,7 @@ export default function ShoppingCart({ open, handleClose }) {
                   variant="contained"
                   onClick={handleSubmit}
                   loading={submitLoading}
-                  disabled={removeItemLoading}
+                  disabled={!isConnected || removeItemLoading}
                 >
                   Place order
                 </LoadingButton>
