@@ -24,6 +24,7 @@ const ExpandMoreIconStyled = styled(ExpandMoreIcon)(() => ({
 }))
 
 const ListGridStyle = styled('div')(({ theme }) => ({
+  minHeight: '8rem',
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(205px, 1fr))',
   columnGap: '2.5rem',

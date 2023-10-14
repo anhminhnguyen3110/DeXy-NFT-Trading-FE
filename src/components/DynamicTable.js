@@ -29,7 +29,7 @@ const TableRowStyle = styled(TableRow)(({ theme }) => ({
   '&:not(:first-of-type)': {
     borderTop: `1px solid ${theme.palette.grey[500]}`,
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     '&:first-of-type': {
       borderTop: `1px solid ${theme.palette.primary.main}`,
     },

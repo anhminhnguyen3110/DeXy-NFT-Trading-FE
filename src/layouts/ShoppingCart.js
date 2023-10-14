@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useAccount, useContractWrite } from 'wagmi'
+import { useAccount, useContractWrite, useFeeData, usePublicClient } from 'wagmi'
 import { parseEther, getAddress } from 'viem'
 import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack'
@@ -84,7 +84,7 @@ export default function ShoppingCart({ open, handleClose }) {
   )
   const theme = useTheme()
   const { address: userAddress, isConnected } = useAccount()
-  const { writeAsync: writeContract, error } = useContractWrite({
+  const { writeAsync: writeContract } = useContractWrite({
     address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
     abi: contractAbi,
     functionName: 'batchBuy',
@@ -95,19 +95,19 @@ export default function ShoppingCart({ open, handleClose }) {
       setLoading(true)
       try {
         const {
-          data: {
-            data: { items },
-          },
-        } = await axios.get('/shopping-cart')
-        setCartItems(items)
+          data: { data },
+        } = await axios.get('/shopping-cart-items')
+        setCartItems(data ?? [])
       } catch (error) {
-        enqueueSnackbar('Failed to fetch cart items', { variant: 'error' })
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to fetch cart items', {
+          variant: 'error',
+        })
       } finally {
         setLoading(false)
       }
     }
-    fetchCartItems()
-  }, [enqueueSnackbar, open])
+    if (isConnected && open) fetchCartItems()
+  }, [enqueueSnackbar, isConnected, open])
 
   const handleSubmit = async () => {
     setSubmitLoading(true)
@@ -115,19 +115,32 @@ export default function ShoppingCart({ open, handleClose }) {
       await writeContract({
         args: [
           cartItems.map((item) => getAddress(item.item_owner_address)),
-          cartItems.map((item) => item.item_id),
+          cartItems.map((item) => parseInt(item.item_id)),
           cartItems.map((item) => parseEther(item.item_fixed_price.toString())),
         ],
-        value: parseEther(
-          cartItems.reduce((acc, item) => acc + item.item_fixed_price, 0).toString()
+        value: cartItems.reduce(
+          (acc, item) => acc + parseEther(item.item_fixed_price.toString()),
+          0n
         ),
         from: getAddress(userAddress),
       })
+      // refresh page if on marketplace or item page /item/id with the id of the items in cart
+      console.log(router.pathname, router.query.id, cartItems)
+      if (
+        router.pathname === '/marketplace' ||
+        (router.pathname.startsWith('/item') &&
+          cartItems.some((item) => router.query.id == item.item_id))
+      ) {
+        router.reload()
+      }
       handleClose()
       setCartItems([])
+
       enqueueSnackbar('Order placed successfully', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Failed to place order', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to place order', {
+        variant: 'error',
+      })
     } finally {
       setSubmitLoading(false)
     }
@@ -139,14 +152,14 @@ export default function ShoppingCart({ open, handleClose }) {
     try {
       // optimistic update
       setCartItems((prev) => prev.filter((_, i) => i !== index))
-      await axios.delete(`/shopping-cart/remove-item`, {
-        item_id: cartItems[index].item_id,
-      })
+      await axios.delete(`/shopping-cart-items/${cartItems[index].item_id}`)
       enqueueSnackbar('Item removed successfully', { variant: 'success' })
     } catch (error) {
       // rollback
       setCartItems((prev) => [...prev.slice(0, index), deletedItem, ...prev.slice(index)])
-      enqueueSnackbar('Failed to remove item', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to remove item', {
+        variant: 'error',
+      })
     } finally {
       setRemoveItemLoading(false)
     }
@@ -159,17 +172,15 @@ export default function ShoppingCart({ open, handleClose }) {
       // optimistic update
       setCartItems([])
       await Promise.all(
-        deletedItems.map((item) =>
-          axios.delete(`/shopping-cart/remove-item`, {
-            item_id: item.item_id,
-          })
-        )
+        deletedItems.map((item) => axios.delete(`/shopping-cart-items/${item.item_id}`))
       )
       enqueueSnackbar('All items removed successfully', { variant: 'success' })
     } catch (error) {
       // rollback
       setCartItems(deletedItems)
-      enqueueSnackbar('Failed to remove items', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to remove items', {
+        variant: 'error',
+      })
     } finally {
       setRemoveItemLoading(false)
     }
@@ -184,15 +195,21 @@ export default function ShoppingCart({ open, handleClose }) {
   }, [router, handleClose])
 
   return (
-    <DialogStyled open={open} onClose={handleClose} fullScreen={fullScreen} fullWidth maxWidth="xs">
-      <CloseButton onClick={handleClose}>
+    <DialogStyled
+      open={open}
+      onClose={submitLoading ? null : handleClose}
+      fullScreen={fullScreen}
+      fullWidth
+      maxWidth="xs"
+    >
+      <CloseButton onClick={submitLoading ? null : handleClose}>
         <CloseRoundedIcon />
       </CloseButton>
       <Stack gap={2.5} justifyContent="stretch">
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h2">My Cart</Typography>
           {!loading && cartItems.length > 0 && (
-            <Button variant="text" color="info" onClick={handleRemoveAll}>
+            <Button variant="text" color="info" onClick={handleRemoveAll} disabled={submitLoading}>
               Clear all
             </Button>
           )}
@@ -210,7 +227,11 @@ export default function ShoppingCart({ open, handleClose }) {
                 gap={{ xs: 1, sm: 2 }}
               >
                 <ImageContainer onClick={() => handleClickItem()(index)}>
-                  <Image src={`/${item.item_image}`} fill alt={`Cart item ${index}`} />
+                  <Image
+                    src={`data:image/png;base64,${item.item_image}`}
+                    fill
+                    alt={`Cart item ${index}`}
+                  />
                 </ImageContainer>
                 <Stack gap={0.25} alignSelf="flex-start">
                   <Typography variant="body1">{item.item_name}</Typography>
@@ -228,6 +249,7 @@ export default function ShoppingCart({ open, handleClose }) {
                   <IconButton
                     sx={{ marginRight: { xs: '0.4rem', sm: '0.9rem' } }}
                     onClick={() => handleRemoveItem(index)}
+                    disabled={removeItemLoading || submitLoading}
                   >
                     <RemoveShoppingCartRoundedIcon />
                   </IconButton>

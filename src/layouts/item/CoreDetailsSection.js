@@ -26,6 +26,7 @@ const BoldText = styled(Typography)(({ theme }) => ({
  * @param {object} owner details of the owner
  * @param {boolean} ownerLoading whether the owner is loading or not
  * @param {object} item details of the item
+ * @param {object} metadata metadata of the item
  * @param {string} description description of the item
  * @param {boolean} showActionButtons whether to show action buttons or not
  * @param {function} onTakeOver take over button handler
@@ -36,6 +37,7 @@ export default function CoreDetailsSection({
   owner,
   ownerLoading,
   item,
+  metadata,
   description,
   showActionButtons = true,
   onTakeOver,
@@ -81,7 +83,7 @@ export default function CoreDetailsSection({
             </>
           ) : (
             <>
-              <Avatar sizes="small" src={owner.image} />
+              <Avatar sizes="small" src={`data:image/png;base64,${owner.image}`} />
               <Stack>
                 <Typography variant="body1">{owner.username}</Typography>
                 <Typography variant="subtitle1">{walletAddressFormat(owner.address)}</Typography>
@@ -92,14 +94,35 @@ export default function CoreDetailsSection({
       </Stack>
 
       <Stack
-        gap={6}
+        gap={4}
         direction={{ xs: 'column-reverse', md: 'column' }}
         justifyContent="space-between"
         height="100%"
       >
-        <Stack spacing={1}>
-          <Typography variant="h3">Description</Typography>
-          <Typography variant="body1">{description}</Typography>
+        <Stack gap={4}>
+          <Stack spacing={1}>
+            <Typography variant="h3">Description</Typography>
+            <Typography variant="body1">{description}</Typography>
+          </Stack>
+
+          <Stack>
+            <Typography variant="h3" gutterBottom>
+              Asset detail
+            </Typography>
+            <Stack gap="0.2rem">
+              <Typography variant="body1">{`Category: ${metadata.category}`}</Typography>
+              <Typography variant="body1">{`Created date: ${new Date(
+                metadata.createdDate
+              ).toLocaleString()}`}</Typography>
+              <Typography variant="body1">{`Created by: ${walletAddressFormat(
+                metadata.createdBy
+              )}`}</Typography>
+              <Typography variant="body1">{`Owned by: ${walletAddressFormat(
+                owner.address
+              )}`}</Typography>
+              <Typography variant="body1">{`Fix price: ${item.price}`}</Typography>
+            </Stack>
+          </Stack>
         </Stack>
 
         <Stack gap={1.25}>

@@ -105,7 +105,7 @@ export default function ItemDetail() {
       try {
         const {
           data: { data: itemData },
-        } = await axios.get(`/item/${id}`)
+        } = await axios.get(`/items/${id}`)
 
         setItemCoreDetails({
           name: itemData.item_name,
@@ -124,7 +124,9 @@ export default function ItemDetail() {
           image: '',
         })
       } catch (error) {
-        enqueueSnackbar('Error while fetching item', { variant: 'error' })
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Error while fetching item', {
+          variant: 'error',
+        })
       } finally {
         setItemLoading(false)
       }
@@ -140,11 +142,14 @@ export default function ItemDetail() {
         const {
           data: { data: moreItemsFromUserData },
         } = await axios.get(
-          `/items?limit=10&page=0&user_address=${itemOwner.address}}&sort_by="RECENTLY_LISTED"`
+          `/items?limit=10&page=1&user_wallet_address=${itemOwner.address}&sort_by=NEWEST`
         )
         setMoreItemsFromUser(moreItemsFromUserData)
       } catch (error) {
-        enqueueSnackbar('Error while fetching more items from user', { variant: 'error' })
+        enqueueSnackbar(
+          error?.response?.data?.detail ?? 'Error while fetching more items from user',
+          { variant: 'error' }
+        )
       } finally {
         setMoreItemsFromUserLoading(false)
       }
@@ -161,7 +166,9 @@ export default function ItemDetail() {
           image: ownerData.user_image,
         })
       } catch (error) {
-        enqueueSnackbar('Error while fetching item owner', { variant: 'error' })
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Error while fetching item owner', {
+          variant: 'error',
+        })
       } finally {
         setOwnerLoading(false)
       }
@@ -212,18 +219,23 @@ export default function ItemDetail() {
       setItemOwner((prev) => ({ ...prev, address: userAddress }))
       enqueueSnackbar('Order processed successfully', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Error while processing the order. Please try again.', { variant: 'error' })
+      enqueueSnackbar(
+        error?.response?.data?.detail ?? 'Error while processing the order. Please try again.',
+        { variant: 'error' }
+      )
     }
   }
 
   const handleAddToCart = async () => {
     try {
-      await axios.post('/shopping-cart/add-item', {
+      await axios.post('/shopping-cart-items/add-item', {
         item_id: id,
       })
       enqueueSnackbar('Added to cart successfully', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Error while adding to cart', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Error while adding to cart', {
+        variant: 'error',
+      })
     }
   }
 
@@ -256,6 +268,7 @@ export default function ItemDetail() {
                     ownerLoading={ownerLoading}
                     description={itemMetadata.description}
                     item={itemCoreDetails}
+                    metadata={itemMetadata}
                     handleOfferPageChange={handleOfferPageChange}
                     showActionButtons={
                       isConnected && itemOwner.address && itemOwner.address !== userAddress
@@ -270,41 +283,19 @@ export default function ItemDetail() {
                   <Skeleton variant="rounded" height={500} />
                 ) : (
                   <ImageContainer>
-                    <Image src={itemCoreDetails.image} alt={`image-${id}`} fill priority />
+                    <Image
+                      src={`data:image/png;base64,${itemCoreDetails.image}`}
+                      alt={`image-${id}`}
+                      fill
+                      priority
+                    />
                   </ImageContainer>
                 )}
               </GridV2>
             </GridV2>
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h3" gutterBottom>
-              Asset detail
-            </Typography>
-            <Stack gap="0.2rem">
-              {itemLoading ? (
-                <>
-                  <Skeleton variant="text" height={40} />
-                  <Skeleton variant="text" height={40} />
-                  <Skeleton variant="text" height={40} />
-                  <Skeleton variant="text" height={40} />
-                  <Skeleton variant="text" height={40} />
-                </>
-              ) : (
-                <>
-                  <Typography variant="body1">{`Category: ${itemMetadata.category}`}</Typography>
-                  <Typography variant="body1">{`Created date: ${itemMetadata.createdDate}`}</Typography>
-                  <Typography variant="body1">{`Created by: ${walletAddressFormat(
-                    itemMetadata.createdBy
-                  )}`}</Typography>
-                  <Typography variant="body1">{`Owned by: ${walletAddressFormat(
-                    itemOwner.address
-                  )}`}</Typography>
-                  <Typography variant="body1">{`Fix price: ${itemCoreDetails.price}`}</Typography>
-                </>
-              )}
-            </Stack>
-          </Grid>
-          <Grid item xs={12}>
+
+          <Grid item xs={12} marginTop={4}>
             <Typography variant="h3" gutterBottom>
               More from this user
             </Typography>

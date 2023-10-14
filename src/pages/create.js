@@ -56,7 +56,6 @@ export default function CreateItem({ categories }) {
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [startPrice, setStartPrice] = useState(0)
   const [fixPrice, setFixPrice] = useState(0)
   const [file, setFile] = useState(null)
   const [category, setCategory] = useState(0)
@@ -102,24 +101,31 @@ export default function CreateItem({ categories }) {
     setLoading(true)
     try {
       const formData = new FormData()
-      formData.append('image', file)
-      formData.append('name', name)
-      formData.append('description', description)
-      formData.append('start_price', startPrice)
-      formData.append('fix_price', fixPrice)
-      formData.append('category_id', categories[category].id)
+      formData.append(
+        'payload',
+        JSON.stringify({
+          name,
+          description,
+          fix_price: fixPrice,
+          category_id: categories[category].id,
+          create_date: new Date().toISOString(),
+        })
+      )
+      formData.append('item_file', file)
       const response = await axios({
         method: 'POST',
-        url: '/items/create',
+        url: '/items/create-item',
         data: formData,
         headers: {
           'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
         },
       })
-      router.push(`/item/${response.data.item_id}`)
+      router.push(`/item/${response.data.id}`)
       enqueueSnackbar('Item created successfully', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Failed to create item', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to create item', {
+        variant: 'error',
+      })
     } finally {
       setLoading(false)
     }
@@ -204,19 +210,6 @@ export default function CreateItem({ categories }) {
 
           <Stack gap={0.8}>
             <Typography variant="h2" component="h2">
-              Start Price
-            </Typography>
-            <Typography variant="body1">Fill in your initial cost of Dexy item</Typography>
-            <InputBaseStyled
-              placeholder="Enter the item’s start price"
-              type="number"
-              value={startPrice}
-              onChange={handleChangeStartPrice}
-            />
-          </Stack>
-
-          <Stack gap={0.8}>
-            <Typography variant="h2" component="h2">
               Fix Price
             </Typography>
             <Typography variant="body1">Fill in your fixed cost to acquire Dexy item</Typography>
@@ -261,7 +254,7 @@ export default function CreateItem({ categories }) {
 }
 
 CreateItem.getInitialProps = async () => {
-  const response = await axios.get('/category')
+  const response = await axios.get('/categories')
   const categories = response.data.data
   return {
     categories: categories.map((category) => ({

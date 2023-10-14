@@ -35,7 +35,12 @@ export default function ActionAreaCard({ image, title, price, onClick, userAddre
   return (
     <CardStyled sx={sx}>
       <CardActionArea onClick={onClick}>
-        <CardMedia component="img" height="180" image={image} alt={title} />
+        <CardMedia
+          component="img"
+          height="180"
+          image={`data:image/png;base64,${image}`}
+          alt={title}
+        />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {title}

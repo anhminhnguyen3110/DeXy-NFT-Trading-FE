@@ -15,6 +15,12 @@
       },
       {
         "indexed": false,
+        "internalType": "uint32",
+        "name": "item",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "buyer",
         "type": "address"
@@ -28,41 +34,6 @@
     ],
     "name": "TransactionAccepted",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      }
-    ],
-    "name": "transactions",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint32",
-        "name": "product",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
   },
   {
     "inputs": [
@@ -142,6 +113,11 @@
           {
             "internalType": "uint256",
             "name": "price",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
             "type": "uint256"
           }
         ],
