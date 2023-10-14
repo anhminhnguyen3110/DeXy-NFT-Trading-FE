@@ -5,23 +5,33 @@
  */
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
+import { formatEther } from 'viem'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
+import { useAccount, useContractRead } from 'wagmi'
 import copy from 'copy-to-clipboard'
 import { useSnackbar } from 'notistack'
 import { useItemListFilter, FILTER_OPTIONS } from '@/hooks/useItemListFilter'
 import axios from '@/utils/axios'
-import { Avatar, Button, Grid, Stack, Typography, Skeleton, styled } from '@mui/material'
+import { Avatar, Button, Grid, Stack, Typography, Skeleton, styled, useTheme } from '@mui/material'
+import SearchOffRoundedIcon from '@mui/icons-material/SearchOffRounded'
 import NonSSRWrapper from '@/utils/NonSsrWrapper'
 import AccountEdit from '@/layouts/account/AccountEdit'
-import userList from '@/dummy-data/user-list'
-import dummyData from '@/dummy-data/item-list'
 import ActionAreaCard from '@/components/Card'
 import PaginationButtons from '@/components/Pagination'
 import DynamicTable from '@/components/DynamicTable'
-import transactionDummyData, { transactionDummyDataColumns } from '@/dummy-data/transaction'
 import ItemList from '@/layouts/marketplace/ItemList'
 import { walletAddressFormat } from '@/utils/format'
+import contractAbi from '@/utils/contractAbi'
+
+const transactionDataColumns = [
+  { id: 'event', label: 'Event', align: 'left' },
+  { id: 'item', label: 'Item Id', align: 'left' },
+  { id: 'price', label: 'Price', align: 'left' },
+  { id: 'from', label: 'From', align: 'left' },
+  { id: 'to', label: 'To', align: 'left' },
+  { id: 'date', label: 'Date', align: 'left' },
+]
 
 const EditButton = styled(Button)(({ theme }) => ({
   width: '9.25rem',
@@ -39,8 +49,12 @@ const PaginationButtonsStyled = styled(PaginationButtons)(() => ({
  * @returns {JSX.Element}
  */
 export default function Account({ categories }) {
+  const theme = useTheme()
   const [openEdit, setOpenEdit] = useState(false)
   const [transactionData, setTransactionData] = useState([])
+  const [transactionPage, setTransactionPage] = useState(1)
+  const [transactionTotalPages, setTransactionTotalPages] = useState(2)
+  const [transactionLoading, setTransactionLoading] = useState(true)
   const router = useRouter()
   const { address } = router.query
   const [userInfo, setUserInfo] = useState({})
@@ -62,21 +76,51 @@ export default function Account({ categories }) {
     handleSortByChange,
     handleCategoryChange,
     handlePageChange,
-  } = useItemListFilter(categories)
+  } = useItemListFilter(Object.keys(categories))
+  const {
+    data: contractTransacitonData,
+    isError: isContractError,
+    isLoading: contractLoading,
+  } = useContractRead({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+    abi: contractAbi,
+    functionName: 'getTransactions',
+    args: [
+      transactionData.map((transaction) => parseInt(transaction.transaction_smart_contract_id)),
+    ],
+  })
+
+  useEffect(() => {
+    if (isContractError && !contractLoading) {
+      enqueueSnackbar('Failed to get transaction history from the block chain', {
+        variant: 'error',
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isContractError, enqueueSnackbar])
 
   useEffect(() => {
     const fetchItems = async () => {
       setItemLoading(true)
       try {
-        const response = await axios.get(
-          `/items?search_input=${search}&limit=4&page=${
-            page - 1
-          }&price_start=${startPrice}&price_end=${endPrice}&sort_by=${sortBy}&category=${category}}&user_address=${address}`
-        )
+        const response = await axios.get('/items', {
+          params: {
+            ...(search && { search_input: search }),
+            limit: 4,
+            page: page,
+            price_start: startPrice || 0,
+            price_end: endPrice || 9999,
+            sort_by: FILTER_OPTIONS[sortBy],
+            category_id: categories[category],
+            user_wallet_address: address,
+          },
+        })
         setItemList(response.data.data)
-        setTotalPages(Math.ceil(response.data.total_items / response.data.item_per_page))
-      } catch {
-        enqueueSnackbar('Failed to load items data', { variant: 'error' })
+        setTotalPages(response.data.total_pages)
+      } catch (error) {
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to load items data', {
+          variant: 'error',
+        })
       } finally {
         setItemLoading(false)
       }
@@ -90,13 +134,33 @@ export default function Account({ categories }) {
       try {
         const response = await axios.get(`/users/${address}`)
         setUserInfo(response.data.data)
-      } catch {
-        router.push('/404')
-        enqueueSnackbar('Failed to load user data', { variant: 'error' })
+      } catch (error) {
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to load user data', {
+          variant: 'error',
+        })
       }
     }
     if (address) fetchUser()
   }, [address, enqueueSnackbar, router])
+
+  useEffect(() => {
+    const fetchTransactionData = async () => {
+      setTransactionLoading(true)
+      try {
+        const response = await axios.get(`/transactions/${address}?limit=5&page=${transactionPage}`)
+        setTransactionData(response.data.data)
+        setTransactionTotalPages(response.data.total_pages)
+      } catch (error) {
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to load transaction data', {
+          variant: 'error',
+        })
+      } finally {
+        setTransactionLoading(false)
+      }
+    }
+
+    if (address) fetchTransactionData()
+  }, [address, enqueueSnackbar, transactionPage])
 
   const handleCloseEdit = () => {
     setOpenEdit(false)
@@ -110,12 +174,17 @@ export default function Account({ categories }) {
   const handleAccountEditSubmit = async (avatar, username, email) => {
     try {
       const formData = new FormData()
-      formData.append('user_image', avatar)
-      formData.append('user_name', username)
-      formData.append('user_email', email)
+      formData.append(
+        'payload',
+        JSON.stringify({
+          user_name: username,
+          user_email: email,
+        })
+      )
+      if (typeof avatar !== 'string') formData.append('user_image', avatar)
       await axios({
         method: 'patch',
-        url: `/users/edit/${userAddress}`,
+        url: `/users/edit`,
         data: formData,
         headers: {
           'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
@@ -123,7 +192,9 @@ export default function Account({ categories }) {
       })
       enqueueSnackbar('Profile updated', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Error updating profile', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Error updating profile', {
+        variant: 'error',
+      })
     }
   }
 
@@ -138,7 +209,7 @@ export default function Account({ categories }) {
             {userInfo && (
               <Stack gap={2}>
                 <Avatar
-                  src={userInfo.user_image}
+                  src={`data:image/png;base64,${userInfo.user_image}`}
                   variant="circular"
                   sx={{ width: '7.5rem', height: '7.5rem' }}
                 />
@@ -150,9 +221,11 @@ export default function Account({ categories }) {
                     onClick={handleCopyAdress}
                     sx={{ cursor: 'pointer' }}
                   >
-                    {userInfo.user_address ? walletAddressFormat(userInfo.user_address) : ''}
+                    {userInfo.user_wallet_address
+                      ? walletAddressFormat(userInfo.user_wallet_address)
+                      : ''}
                   </Typography>
-                  <Typography variant="body1">{userInfo.uswer_email}</Typography>
+                  <Typography variant="body1">{userInfo.user_email}</Typography>
                 </Stack>
                 {address === userAddress && (
                   <EditButton variant="contained" onClick={() => setOpenEdit(true)}>
@@ -166,57 +239,94 @@ export default function Account({ categories }) {
           <Grid item xs={12} lg={9}>
             <Stack direction="column" gap={2.5}>
               <Typography variant="h2">DeXy Items: </Typography>
-              {itemList.length !== 0 && (
-                <ItemList
-                  categories={categories}
-                  filterOptions={FILTER_OPTIONS}
-                  search={search}
-                  startPrice={startPrice}
-                  endPrice={endPrice}
-                  sortBy={sortBy}
-                  category={category}
-                  page={page}
-                  totalPages={totalItemPages}
-                  handleSearchChange={handleSearchChange}
-                  handleStartPriceChange={handleStartPriceChange}
-                  handleEndPriceChange={handleEndPriceChange}
-                  handleSortByChange={handleSortByChange}
-                  handleCategoryChange={handleCategoryChange}
-                  handlePageChange={handlePageChange}
-                >
-                  {itemLoading
-                    ? Array.from({ length: 4 }).map((_, index) => (
-                        <Skeleton
-                          key={`account-item-skeleton-${index}`}
-                          variant="rounded"
-                          width={210}
-                          height={300}
-                        />
-                      ))
-                    : itemList.map((item) => (
-                        <ActionAreaCard
-                          userAddress={item.item_owner_address}
-                          key={`account-item-${item.item_id}`}
-                          image={item.item_image}
-                          title={item.item_name}
-                          price={item.item_fixed_price}
-                          onClick={() => router.push(`/item/${item.item_id}`)}
-                        />
-                      ))}
-                </ItemList>
-              )}
+              <ItemList
+                categories={Object.keys(categories)}
+                filterOptions={Object.keys(FILTER_OPTIONS)}
+                search={search}
+                startPrice={startPrice}
+                endPrice={endPrice}
+                sortBy={sortBy}
+                category={category}
+                page={page}
+                totalPages={totalItemPages}
+                handleSearchChange={handleSearchChange}
+                handleStartPriceChange={handleStartPriceChange}
+                handleEndPriceChange={handleEndPriceChange}
+                handleSortByChange={handleSortByChange}
+                handleCategoryChange={handleCategoryChange}
+                handlePageChange={handlePageChange}
+              >
+                {itemLoading ? (
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <Skeleton
+                      key={`account-item-skeleton-${index}`}
+                      variant="rounded"
+                      width={210}
+                      height={300}
+                    />
+                  ))
+                ) : itemList.length ? (
+                  itemList.map((item) => (
+                    <ActionAreaCard
+                      userAddress={item.item_owner_address}
+                      key={`account-item-${item.item_id}`}
+                      image={item.item_image}
+                      title={item.item_name}
+                      price={item.item_fixed_price}
+                      onClick={() => router.push(`/item/${item.item_id}`)}
+                    />
+                  ))
+                ) : (
+                  <Stack alignItems="center" gridColumn="1/-1">
+                    <SearchOffRoundedIcon sx={{ fontSize: '5rem' }} />
+                    <Typography variant="h4">No items found</Typography>
+                  </Stack>
+                )}
+              </ItemList>
             </Stack>
           </Grid>
 
           <Grid item xs={12}>
             <Stack gap={3.75}>
               <Typography variant="h2">Transaction History</Typography>
-              {transactionData.length > 0 && (
-                <>
-                  <DynamicTable data={transactionData} columns={transactionDummyDataColumns} />
-                  <PaginationButtonsStyled />
-                </>
-              )}
+              <DynamicTable
+                data={
+                  transactionLoading || contractLoading
+                    ? Array.from({ length: 5 }).map((_, idx) => ({
+                        event: <Skeleton variant="text" width="2rem" />,
+                        item: <Skeleton variant="text" width="2rem" />,
+                        price: <Skeleton variant="text" width="2.5rem" />,
+                        from: <Skeleton variant="text" width="7rem" />,
+                        to: <Skeleton variant="text" width="7rem" />,
+                        date: <Skeleton variant="text" width="11rem" />,
+                      }))
+                    : (contractTransacitonData ?? []).map((transaction) => ({
+                        event: transaction.to === address ? 'Sell' : 'Buy',
+                        item: (
+                          <Link
+                            href={`/item/${transaction.product}`}
+                            style={{ color: theme.palette.primary.main }}
+                          >
+                            {transaction.product}
+                          </Link>
+                        ),
+                        price: formatEther(transaction.price),
+                        from: walletAddressFormat(transaction.from),
+                        to: walletAddressFormat(transaction.to),
+                        date: new Date(
+                          parseInt(`${transaction.timestamp}`) * 1000
+                        ).toLocaleString(),
+                      }))
+                }
+                columns={transactionDataColumns}
+              />
+              <PaginationButtonsStyled
+                page={transactionPage}
+                handlePageChange={(_event, value) => {
+                  setTransactionPage(value)
+                }}
+                pageCount={transactionTotalPages}
+              />
             </Stack>
           </Grid>
         </Grid>
@@ -233,7 +343,16 @@ export default function Account({ categories }) {
 }
 
 Account.getInitialProps = async () => {
-  const response = await axios.get('/category')
-  const categories = response.data.data
-  return { categories: categories.map((category) => category.category_name) }
+  try {
+    const response = await axios.get('/categories')
+    const categories = response.data.data
+    return {
+      categories: Object.fromEntries(
+        categories.map((category) => [category.category_name, category.category_id])
+      ),
+    }
+  } catch (error) {
+    console.log(error)
+    return { categories: {} }
+  }
 }

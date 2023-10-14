@@ -69,8 +69,8 @@ const UploadInput = styled('input')(({ theme }) => ({
  */
 export default function AccountEdit({ userInfo, open, handleClose, handleSubmit }) {
   const [avatar, setAvatar] = useState(userInfo.user_image)
-  const [username, setUsername] = useState(userInfo.user_name)
-  const [email, setEmail] = useState(userInfo.user_email)
+  const [username, setUsername] = useState(userInfo.user_name || '')
+  const [email, setEmail] = useState(userInfo.user_email || '')
   const fullScreen = useResponsive('down', 'sm')
   const [loading, setLoading] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState('')
@@ -78,8 +78,8 @@ export default function AccountEdit({ userInfo, open, handleClose, handleSubmit 
   useEffect(() => {
     setAvatarUrl('')
     setAvatar(userInfo.user_image)
-    setUsername(userInfo.user_name)
-    setEmail(userInfo.user_email)
+    setUsername(userInfo.user_name || '')
+    setEmail(userInfo.user_email || '')
   }, [userInfo])
 
   const handleClickSubmit = async () => {
@@ -111,7 +111,7 @@ export default function AccountEdit({ userInfo, open, handleClose, handleSubmit 
       <AvatarContainer>
         <Avatar
           id="avatar-edit"
-          src={avatarUrl || avatar}
+          src={avatarUrl || `data:image/png;base64,${avatar}`}
           sx={{ width: '120px', height: '120px', pointerEvents: 'none' }}
         />
         <IconButton id="avatar-edit-button">

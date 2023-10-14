@@ -5,19 +5,18 @@
  */
 import { useState } from 'react'
 
-export const FILTER_OPTIONS = [
-  'Recently listed',
-  'Price (Lowest to highest)',
-  'Price (Highest to lowest)',
-  'Newest',
-  'Oldest',
-]
+export const FILTER_OPTIONS = {
+  Newest: 'NEWEST',
+  Oldest: 'OLDEST',
+  'Price (Lowest to highest)': 'PRICE_LOW_TO_HIGH',
+  'Price (Highest to lowest)': 'PRICE_HIGH_TO_LOW',
+}
 
 export function useItemListFilter(categories) {
   const [search, setSearch] = useState('')
   const [startPrice, setStartPrice] = useState(0)
   const [endPrice, setEndPrice] = useState(100)
-  const [sortBy, setSortBy] = useState(FILTER_OPTIONS[0])
+  const [sortBy, setSortBy] = useState(Object.keys(FILTER_OPTIONS)[0])
   const [category, setCategory] = useState(categories[0])
   const [page, setPage] = useState(1)
 

@@ -148,17 +148,17 @@ function ResponsiveAppBar() {
         if (!isReconnected) {
           const message = await signMessageAsync()
           const authResponse = await axios.post('/auth', {
-            user_address: address,
-            sign_message: message,
+            wallet_address: address,
+            signature: message,
           })
-          const token = authResponse.data.token
+          const token = authResponse.data.access_token
           localStorage.setItem('token', token)
         }
 
         const userdetailResponse = await axios.get(`/users/${address}`)
         setUserDetails(userdetailResponse.data.data)
-      } catch {
-        enqueueSnackbar('Login failed', { variant: 'error' })
+      } catch (error) {
+        enqueueSnackbar(error?.response?.data?.detail ?? 'Login failed', { variant: 'error' })
         disconnect()
       } finally {
         setLoginLoading(false)
@@ -198,15 +198,15 @@ function ResponsiveAppBar() {
 
     setSearchLoading(true)
     try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/search?search_input=${event.target.value}`
-      )
+      const response = await axios.get(`/search?search_input=${event.target.value}`)
       setSearchResult({
         items: response.data.items.data,
         users: response.data.users.data,
       })
     } catch (error) {
-      enqueueSnackbar('Failed to fetch search result', { variant: 'error' })
+      enqueueSnackbar(error?.response?.data?.detail ?? 'Failed to fetch search result', {
+        variant: 'error',
+      })
     } finally {
       setSearchLoading(false)
     }
@@ -241,27 +241,36 @@ function ResponsiveAppBar() {
         <SearchResultTitle disabled>
           <SearchResultText>Items</SearchResultText>
         </SearchResultTitle>
-        {searchResult.items.map(({ id, item_name, owner_address, image }) => (
-          <MenuItem key={`search-result-item-${id}`} onClick={() => handleClickMenu(`/item/${id}`)}>
-            <Avatar src={image} variant="rounded" />
+        {searchResult.items.map(({ item_id, item_name, item_owner_address, item_image }) => (
+          <MenuItem
+            key={`search-result-item-${item_id}`}
+            onClick={() => handleClickMenu(`/item/${item_id}`)}
+          >
+            <Avatar
+              src={`data:image/png;base64,${item_image}`}
+              alt={`search item ${item_name}`}
+              variant="rounded"
+            />
             <Stack gap={0.2} marginLeft={1}>
               <SearchResultText>{item_name}</SearchResultText>
-              <Typography variant="subtitle2">{walletAddressFormat(owner_address)}</Typography>
+              <Typography variant="subtitle2">{walletAddressFormat(item_owner_address)}</Typography>
             </Stack>
           </MenuItem>
         ))}
         <SearchResultTitle disabled>
           <SearchResultText>Users</SearchResultText>
         </SearchResultTitle>
-        {searchResult.users.map(({ id, user_name, user_address, image }) => (
+        {searchResult.users.map(({ user_id, user_name, user_wallet_address, user_image }) => (
           <MenuItem
-            key={`search-result-user-${id}`}
-            onClick={() => handleClickMenu(`/account/${user_address}`)}
+            key={`search-result-user-${user_id}`}
+            onClick={() => handleClickMenu(`/account/${user_wallet_address}`)}
           >
-            <Avatar src={image} />
+            <Avatar src={`data:image/png;base64,${user_image}`} alt={`search user ${user_name}`} />
             <Stack gap={0.2} marginLeft={1}>
               <SearchResultText>{user_name}</SearchResultText>
-              <Typography variant="subtitle2">{walletAddressFormat(user_address)}</Typography>
+              <Typography variant="subtitle2">
+                {walletAddressFormat(user_wallet_address)}
+              </Typography>
             </Stack>
           </MenuItem>
         ))}
@@ -285,10 +294,13 @@ function ResponsiveAppBar() {
       <>
         <MenuItem onClick={() => openWalletConnect({ route: 'Account' })}>
           <Stack direction="row" gap={1} alignItems="center">
-            <Avatar src={userDetails.image} sx={{ width: 26, height: 26 }} />
+            <Avatar
+              src={`data:image/png;base64,${userDetails.user_image}`}
+              sx={{ width: 26, height: 26 }}
+            />
             <Typography fontWeight="bold">{userDetails.user_name}</Typography>
             <Typography variant="subtitle2" sx={{ marginLeft: '1rem' }}>
-              {userAddress.slice(0, 8)}
+              {walletAddressFormat(userAddress)}
             </Typography>
           </Stack>
         </MenuItem>
@@ -302,7 +314,7 @@ function ResponsiveAppBar() {
           Balance:
           <Stack direction="row" gap={1} sx={{ marginLeft: 'auto' }} alignItems="center">
             <EthereumIcon size={10} />
-            {balance?.formatted}
+            {Math.round(balance?.formatted * 1000) / 1000}
           </Stack>
         </MenuItem>
       </>
