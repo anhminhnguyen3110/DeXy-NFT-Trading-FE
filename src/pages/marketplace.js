@@ -50,12 +50,14 @@ export default function Marketplace({ categories }) {
         const response = await axios.get('/items', {
           params: {
             ...(search && { search_input: search }),
-            limit: 4,
+            limit: 5,
             page: page,
             price_start: startPrice || 0,
             price_end: endPrice || 9999,
             sort_by: FILTER_OPTIONS[sortBy],
-            category_id: categories[category],
+            ...(categories[category] !== '' && {
+              category_id: categories[category],
+            }),
           },
         })
         setItemList(response.data.data)
@@ -133,8 +135,9 @@ Marketplace.getInitialProps = async () => {
   const response = await axios.get('/categories')
   const categories = response.data.data
   return {
-    categories: Object.fromEntries(
-      categories.map((category) => [category.category_name, category.category_id])
-    ),
+    categories: Object.fromEntries([
+      ['All', ''],
+      ...categories.map((category) => [category.category_name, category.category_id]),
+    ]),
   }
 }
