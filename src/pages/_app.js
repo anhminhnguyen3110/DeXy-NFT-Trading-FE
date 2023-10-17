@@ -30,7 +30,24 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) =>
   },
 }))
 
-const chains = [localhost, mainnet]
+const chains = [
+  {
+    id: 1337,
+    name: 'Ganache',
+    network: process.env.NEXT_PUBLIC_GANACHE_NETWORK || '',
+    nativeCurrency: {
+      decimals: 18,
+      name: 'Ether',
+      symbol: 'ETH',
+    },
+    rpcUrls: {
+      default: { http: [process.env.NEXT_PUBLIC_GANACHE_NETWORK || ''] },
+      public: { http: [process.env.NEXT_PUBLIC_GANACHE_NETWORK || ''] },
+    },
+  },
+  localhost,
+  mainnet,
+]
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const metadata = {
   name: 'Web3Modal',
