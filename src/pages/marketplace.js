@@ -50,7 +50,7 @@ export default function Marketplace({ categories }) {
         const response = await axios.get('/items', {
           params: {
             ...(search && { search_input: search }),
-            limit: 5,
+            limit: 12,
             page: page,
             price_start: startPrice || 0,
             price_end: endPrice || 9999,

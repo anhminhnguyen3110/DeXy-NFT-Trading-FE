@@ -120,7 +120,9 @@ export default function CoreDetailsSection({
               <Typography variant="body1">{`Owned by: ${walletAddressFormat(
                 owner.address
               )}`}</Typography>
-              <Typography variant="body1">{`Fix price: ${item.price}`}</Typography>
+              <Typography variant="body1">{`Fix price: ${
+                Math.round(item.price * 1000) / 1000
+              }`}</Typography>
             </Stack>
           </Stack>
         </Stack>
@@ -130,7 +132,7 @@ export default function CoreDetailsSection({
             <BoldText>Price</BoldText>
             <Stack direction="row" gap={1} alignItems="center">
               <EthereumIcon size={isSm ? 13 : 18} />
-              <BoldText>{item.price}</BoldText>
+              <BoldText>{Math.round(item.price * 1000) / 1000}</BoldText>
             </Stack>
           </Stack>
           {showActionButtons && (

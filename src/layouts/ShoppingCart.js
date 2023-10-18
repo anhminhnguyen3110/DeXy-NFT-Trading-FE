@@ -254,7 +254,9 @@ export default function ShoppingCart({ open, handleClose }) {
                     <RemoveShoppingCartRoundedIcon />
                   </IconButton>
                   <EthereumIcon size={12} />
-                  <Typography variant="body1">{item.item_fixed_price}</Typography>
+                  <Typography variant="body1">
+                    {Math.round(item.item_fixed_price * 1000) / 1000}
+                  </Typography>
                 </Stack>
               </Stack>
             ))}
