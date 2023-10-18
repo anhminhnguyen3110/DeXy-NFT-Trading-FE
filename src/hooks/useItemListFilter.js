@@ -22,22 +22,27 @@ export function useItemListFilter(categories) {
 
   function handleSearchChange(event) {
     setSearch(event.target.value)
+    setPage(1)
   }
 
   function handleStartPriceChange(event) {
     setStartPrice(event.target.value)
+    setPage(1)
   }
 
   function handleEndPriceChange(event) {
     setEndPrice(event.target.value)
+    setPage(1)
   }
 
   function handleSortByChange(event) {
     setSortBy(event.target.value)
+    setPage(1)
   }
 
   function handleCategoryChange(event) {
     setCategory(event.target.value)
+    setPage(1)
   }
 
   function handlePageChange(_event, value) {
