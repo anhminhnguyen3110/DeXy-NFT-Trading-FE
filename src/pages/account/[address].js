@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { formatEther } from 'viem'
+import { formatEther, getAddress } from 'viem'
 import { useRouter } from 'next/router'
 import { useAccount, useContractRead } from 'wagmi'
 import copy from 'copy-to-clipboard'
@@ -302,7 +302,11 @@ export default function Account({ categories }) {
                         to: <Skeleton variant="text" width="7rem" />,
                         date: <Skeleton variant="text" width="11rem" />,
                       }))
-                    : (contractTransacitonData ?? []).map((transaction) => ({
+                    : (contractTransacitonData?.[0]?.from !==
+                      getAddress('0x0000000000000000000000000000000000000000')
+                        ? contractTransacitonData
+                        : []
+                      ).map((transaction) => ({
                         event: transaction.to === address ? 'Sell' : 'Buy',
                         item: (
                           <Link
