@@ -183,7 +183,7 @@ export default function Account({ categories }) {
           user_email: email,
         })
       )
-      if (typeof avatar !== 'string') formData.append('user_image', avatar)
+      if (avatar && typeof avatar !== 'string') formData.append('user_image', avatar)
       await axios({
         method: 'patch',
         url: `/users/edit`,
@@ -192,6 +192,26 @@ export default function Account({ categories }) {
           'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
         },
       })
+
+      if (avatar && typeof avatar !== 'string') {
+        const reader = new FileReader()
+        reader.readAsDataURL(avatar)
+        reader.onloadend = () => {
+          setUserInfo((prev) => ({
+            ...prev,
+            user_name: username,
+            user_email: email,
+            user_image: reader.result.replace('data:', '').replace(/^.+,/, ''),
+          }))
+        }
+      } else {
+        setUserInfo((prev) => ({
+          ...prev,
+          user_name: username,
+          user_email: email,
+        }))
+      }
+
       enqueueSnackbar('Profile updated', { variant: 'success' })
     } catch (error) {
       enqueueSnackbar(error?.response?.data?.detail ?? 'Error updating profile', {
@@ -211,7 +231,7 @@ export default function Account({ categories }) {
             {userInfo && (
               <Stack gap={2}>
                 <Avatar
-                  src={`data:image/png;base64,${userInfo.user_image}`}
+                  src={`data:image/png;base64,${userInfo.user_image || ''}`}
                   variant="circular"
                   sx={{ width: '7.5rem', height: '7.5rem' }}
                 />
