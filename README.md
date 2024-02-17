@@ -1,6 +1,6 @@
-# COS30049-FE
+# Dexy-Trading-Project-FE
 
-Front-end for COS30049 - Innovation Project. This is a web application that integrates Web3 technology to allow transparent trading of digital assets.
+Front-end for DeXy is a platform designed for trading Non-Fungible Tokens (NFTs) using Next.js and Material-UI. This README provides an overview of the frontend structure and implementation details.
 
 ## Pre-requisites
 
@@ -9,7 +9,11 @@ Front-end for COS30049 - Innovation Project. This is a web application that inte
 
 ## Project setup
 
-- Install dependencies:
+To set up the project, follow these steps:
+
+1. Clone this repository to your local machine.
+2. Navigate to the project directory.
+3. Install dependencies:
 
 ```bash
 yarn install
