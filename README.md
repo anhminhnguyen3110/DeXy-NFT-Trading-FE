@@ -1,4 +1,4 @@
-# DeXy Platform - NFT Trading
+# DeXy Platform - NFT Trading FrontEnd
 
 Front-end for DeXy is a platform designed for trading Non-Fungible Tokens (NFTs) using Next.js and Material-UI. This README provides an overview of the frontend structure and implementation details.
 
